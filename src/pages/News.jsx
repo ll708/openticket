@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '../components/Header'; 
 import Footer from '../components/Footer'; 
-import NewsSection from '../components/NewsSection'; // 假設 NewsSection 包含列表內容
+import NewsSection from '../components/NewsSection'; 
 
 
 function News() {

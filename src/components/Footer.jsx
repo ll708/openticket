@@ -16,7 +16,7 @@ function Footer() {
       {/* 2. 連結群組 (右側) */}
       <div className="space-x-4">
         <a href="mailto:contact@openticket.com" className="hover:underline">聯絡信箱</a>
-        <RouterLink to="/" className="hover:underline">常見問題</RouterLink>
+        <RouterLink to="/FAQList" className="hover:underline">常見問題</RouterLink>
         <RouterLink to="/Privacy" className="hover:underline">Privacy</RouterLink>
       </div>
     </footer>
