@@ -64,10 +64,9 @@ function AnnouncementList({ limit = null, isFullPage = false, onSelectAnnounceme
     // --- 列表主體渲染 ---
     return (
         <div className="space-y-4">
-            <h2 className="text-3xl font-bold mb-6 relative pb-2">
+            <h1 className="text-3xl font-bold text-gray-800 mb-8 border-b-4 border-primary pb-2 inline-block">
                 最新消息
-                <span className="absolute bottom-0 left-0 w-16 h-1 bg-orange-500 rounded-full"></span>
-            </h2>
+            </h1>
 
             {announcements.length === 0 ? (
                 <p>目前沒有任何公告。</p>
@@ -105,14 +104,14 @@ function AnnouncementList({ limit = null, isFullPage = false, onSelectAnnounceme
                 </div>
             )}
             
-            {/* 3. 根據 isFullPage 決定是否顯示「查看更多」按鈕 */}
+            {/* 3. 根據 isFullPage 決定是否顯示「查看更多」按鈕
             {!isFullPage && announcements.length > 0 && (
                 <div className="text-center mt-6">
                     <a href="/news" className="text-blue-600 hover:text-blue-800 font-semibold">
                         查看更多公告 &rarr;
                     </a>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }
