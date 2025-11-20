@@ -28,7 +28,7 @@ function Header({ showSearchBar = false }) {
                     )}
           </div>
 
-        <Link to="/shows" className="hover:underline">活動資訊</Link>
+        <Link to="/events" className="hover:underline">活動資訊</Link>
         
         <Link to="/news" className="hover:underline">最新消息</Link>
       </div>

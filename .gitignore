@@ -1,0 +1,29 @@
+# Node
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Env files
+.env
+.env.*
+
+# Logs
+*.log
+
+# Test coverage
+coverage/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Tool caches
+*.cache
+.parcel-cache/
+.turbo/
+
+/otbackend/
