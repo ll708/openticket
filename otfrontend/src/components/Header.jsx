@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom'; 
 import { Button } from "@/components/ui/button";
 import { Search, Menu, X } from 'lucide-react'; // 引入 Menu 和 X 圖標
 
 function Header({ showSearchBar = false }) {
   // 用於管理移動端選單的開/關狀態
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // 搜尋欄狀態（桌面與行動共用）
+  const [searchValue, setSearchValue] = useState("");
+  const [isComposing, setIsComposing] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -39,12 +43,38 @@ function Header({ showSearchBar = false }) {
           {/* 1. 搜尋欄 */}
           {showSearchBar && (
             <div className="relative w-64">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="搜尋活動"
-                className="w-full py-1.5 pl-9 pr-3 text-sm rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition" 
+                className="w-full py-1.5 pl-9 pr-3 text-sm rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+                onCompositionStart={() => setIsComposing(true)}
+                onCompositionEnd={() => setIsComposing(false)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !isComposing) {
+                    const keyword = searchValue.trim();
+                    if (keyword) {
+                      navigate(`/events?keyword=${encodeURIComponent(keyword)}`);
+                    } else {
+                      navigate('/events');
+                    }
+                  }
+                }}
+                aria-label="搜尋活動"
               />
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
+                onClick={() => {
+                  const keyword = searchValue.trim();
+                  if (keyword) {
+                    navigate(`/events?keyword=${encodeURIComponent(keyword)}`);
+                  } else {
+                    navigate('/events');
+                  }
+                }}
+              />
             </div>
           )}
           
@@ -123,12 +153,40 @@ function Header({ showSearchBar = false }) {
             {showSearchBar && (
               <div className="p-6 pt-0">
                 <div className="relative">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="搜尋活動..."
-                    className="w-full py-2 pl-10 pr-4 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition" 
+                    className="w-full py-2 pl-10 pr-4 rounded-lg bg-gray-100 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition"
+                    value={searchValue}
+                    onChange={e => setSearchValue(e.target.value)}
+                    onCompositionStart={() => setIsComposing(true)}
+                    onCompositionEnd={() => setIsComposing(false)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && !isComposing) {
+                        const keyword = searchValue.trim();
+                        if (keyword) {
+                          navigate(`/events?keyword=${encodeURIComponent(keyword)}`);
+                        } else {
+                          navigate('/events');
+                        }
+                        setIsMenuOpen(false);
+                      }
+                    }}
+                    aria-label="搜尋活動"
                   />
-                  <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <Search
+                    size={20}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+                    onClick={() => {
+                      const keyword = searchValue.trim();
+                      if (keyword) {
+                        navigate(`/events?keyword=${encodeURIComponent(keyword)}`);
+                      } else {
+                        navigate('/events');
+                      }
+                      setIsMenuOpen(false);
+                    }}
+                  />
                 </div>
               </div>
             )}
