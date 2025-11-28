@@ -3,10 +3,6 @@ import "../Css/Login.css"
 import { useNavigate, Link, useLocation } from "react-router-dom"
 import GoogleLoginButton from "./GoogleLogin"
 import { useDarkMode } from "../hooks/useDarkMode"
-import Footer from "../components/Footer"
-import Top from "../components/ui/Top"
-import Header from "../components/Header"
-
 
 function Login() {
     const navigate = useNavigate()
@@ -86,9 +82,6 @@ function Login() {
     ]
 
     return (
-        <>
-        <Header showSearchBar={true} /> 
-          
         <div className="login-page">
             {/* 深色模式切換按鈕 */}
             <button
@@ -159,6 +152,7 @@ function Login() {
                                         id="password"
                                         placeholder="Enter your password"
                                         value={password}
+                                        autoComplete="off"
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
                                     />
@@ -200,10 +194,6 @@ function Login() {
                 </div>
             </div>
         </div>
-        <Top />
-        <Footer />
-    </>
-
     )
 }
 
