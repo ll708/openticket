@@ -141,7 +141,8 @@ export default function EventDetail() {
             aria-label="分享連結"
             type="button"
             onClick={() => {
-              if (navigator.share) {
+              const isWindows = navigator.userAgent.includes('Windows');
+              if (navigator.share && !isWindows) {
                 navigator.share({
                   title: document.title,
                   url: window.location.href

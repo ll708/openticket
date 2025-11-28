@@ -30,8 +30,7 @@ export default function EventIntro({ eventId }) {
 
   return (
     <div className="pt-4">
-      {/* 這裡假設 intro 是純文字或 HTML，可根據後端回傳格式調整 */}
-      <div dangerouslySetInnerHTML={{ __html: intro }} />
+      <div dangerouslySetInnerHTML={{ __html: intro.replace(/\n/g, '<br>') }} />
     </div>
   );
 }
