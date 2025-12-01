@@ -26,6 +26,7 @@ function App() {
     <Route path="/FormPage" element={<FormPage />} />
     <Route path="/register" element={<Register />} />
     <Route path="/Member/*" element={<MemberPage />} />
+    <Route path="/Ticket" element={<SelectTicket />} />
     
    </Routes>
 
