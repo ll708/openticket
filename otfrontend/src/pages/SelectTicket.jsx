@@ -7,7 +7,7 @@ import '../Css/SelectTicket.css';
 // **** 設定Spring Boot基礎URL ****
 const BASE_API_URL = 'http://localhost:8080';
 //圖片先寫死
-const DEFAULT_IMAGE_URL = "/images/test.jpg";
+// const DEFAULT_IMAGE_URL = "/images/test.jpg";
 
 export default function SelectTicket() {
   const params = new URLSearchParams(window.location.search);
@@ -79,23 +79,29 @@ export default function SelectTicket() {
             "";
 
           //處裡不限量(is_limited = 0)
-            const isLimited = t.isLimited ?? t.is_limited ?? t.islimited ?? 1; //1預設為限量
-            let stockLimit = Number(t.customlimit) || 0;
-
+            const rawLimited = t.isLimited ?? t.is_limited ?? t.islimited; //1預設為限量
             //如果不限量(isLimited === 0)且customlimit為null
-            if (isLimited === 0 || isLimited === 0){
-              stockLimit = 999;
-            }
+            // if (isLimited === 0 || isLimited === 0){
+            //   stockLimit = 4;
+            // }
+            const isUnlimited =
+              rawLimited === false ||
+              rawLimited === 0 ||
+              rawLimited === "0" ||
+              rawLimited === "false";
             //確保讀取到 'islimited' 欄位
-            const isLimitedStatus = t.isLimited ?? t.is_limited ?? t.islimited ?? 1; 
-
+            // const isLimitedStatus = t.isLimited ?? t.is_limited ?? t.islimited ?? 1; 
+            let stockLimit;
+            const UI_MAX_CAP = 4; //前端介面的最大購買張數
+            const UNLIMITED_STOCK_FLAG = 999;//不限量票
             // 假設後端傳回 islimited: false 時是 '不限量'
-            if (isLimitedStatus === false) {
-                stockLimit = 999; // 設定極大值
-            } else {
-                // 如果是限量 (true) 且 customlimit=null，則 stockLimit 保持為 0
-                stockLimit = Number(t.customlimit) || 0; 
-            }
+            if (isUnlimited) {
+                  // 如果不限量，設置一個極大值，讓 Math.min(4, stockLimit) 保持在 4
+                  stockLimit = UNLIMITED_STOCK_FLAG;
+              } else {
+                  // 如果是限量 (rawLimited=true/1)，則使用後端傳回的 customlimit，若為 null 則設為 0
+                  stockLimit = Number(t.customlimit ?? 0);
+              }
           // 支援多種 price 欄位命名
           const price = t.customprice ?? t.price ?? t.custom_price ?? 0;
 
@@ -269,7 +275,7 @@ export default function SelectTicket() {
       // 實際導向：window.location.href = "/payment.html";
     } catch (err) {
       //庫存扣失敗，顯示錯誤給用戶
-      setMessage("結帳失敗:庫存不足");
+      setMessage("此票種庫存不足");
       console.error("結帳失敗:", err);
       loadTicketTypes(); //重新載入票種以顯示最新庫存
     }
@@ -302,10 +308,10 @@ export default function SelectTicket() {
       </div>
       
       <div className="event-info">
-        <div className="event-left">
+        {/* <div className="event-left"> */}
           {/* 這是讀自己的圖片，非資料庫 */}
-          <img className="event-image" alt="event" src={`${BASE_API_URL}${DEFAULT_IMAGE_URL}`} />
-        </div>
+          {/* <img className="event-image" alt="event" src={`${BASE_API_URL}${DEFAULT_IMAGE_URL}`} /> */}
+        {/* </div> */}
 
         <div className="event-center">
           <h5 id="eventTitle" className="event-title">
@@ -350,10 +356,25 @@ export default function SelectTicket() {
                             disabled={isCheckingOut} //結帳中禁用選擇
                           >
                             <option value={0}>請選擇張數</option>
-                            <option value={1}>1</option>
+                            {/* <option value={1}>1</option>
                             <option value={2}>2</option>
                             <option value={3}>3</option>
-                            <option value={4}>4</option>
+                            <option value={4}>4</option> */}
+                          {(() => {
+                              // 計算可選的最大數量：Min(4, 實際庫存)
+                              const maxSelectable = Math.min(4, Number(t.customlimit || 0));
+
+                              const options = [];
+
+                              for (let i = 1; i <= maxSelectable; i++) {
+                                options.push(
+                                  <option key={i} value={i}>
+                                    {i}
+                                  </option>
+                                );
+                              }
+                              return options;
+                            })()}
                           </select>
                         </td>
                         <td>{t.description}</td>
@@ -372,7 +393,7 @@ export default function SelectTicket() {
           <div>
             票種: <span id="tickettype">{selectedTicketText}</span>
           </div>
-          <div>總共張數: <span id="toatltickets">{`總共${totalTickets}張`}</span></div>
+          <div>總共張數: <span id="totaltickets">{`總共${totalTickets}張`}</span></div>
           <hr />
           <div>
             <strong>總金額: <span id="total">NT${totalAmount}</span></strong>
