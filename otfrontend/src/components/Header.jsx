@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import { Button } from "@/components/ui/button";
 import { Search, Menu, X } from 'lucide-react';
@@ -6,8 +6,8 @@ import { useAuth } from '../hooks/useAuth';
 
 function Header({ showSearchBar = false }) {
   // *********** 模擬登入狀態：使用 會員名稱 ***********
-  const { isLoggedIn, userName, logout } = useAuth();
-
+  const { isLoggedIn, userName, logout , isLoading} = useAuth();
+  // console.log('Header State:', { isLoggedIn, userName, isLoading });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [isComposing, setIsComposing] = useState(false);
@@ -21,12 +21,30 @@ function Header({ showSearchBar = false }) {
     setIsMenuOpen(false);
     if (isLoggedIn) {
       logout(); 
-      navigate("/");
+      // navigate("/");
     } else {
       navigate("/login");
     }
   };
-
+  // 2. 新增 useEffect 監聽 isLoggedIn 狀態
+  useEffect(() => {
+    // 檢查狀態是否從登入轉變為登出 (且頁面不在首頁時才導航，避免無限迴圈)
+    if (!isLoggedIn && !isLoading && window.location.pathname !== '/') {
+      navigate("/");
+    }
+  }, [isLoggedIn, isLoading, navigate]); // 依賴 isLoggedIn, isLoading, navigate
+  // 如果正在載入中，可以選擇返回一個載入中的 Header，或返回 null
+  if (isLoading) {
+    // 載入時可以顯示一個簡化的 Header，避免內容閃爍
+    return (
+    <header className="sticky top-0 z-50 bg-text text-bg shadow-lg font-sans">
+      <div className="flex justify-between items-center max-w-7xl mx-auto px-6 py-3">
+      <Link to="/" className="text-2xl font-extrabold text-primary font-sans">OpenTicket</Link>
+      <div className="animate-pulse bg-gray-700 h-8 w-20 rounded"></div>
+      </div>
+    </header>
+    );
+  }
 
 
   const primaryNavLinks = (
@@ -87,10 +105,12 @@ function Header({ showSearchBar = false }) {
             </div>
           )}
           
-          {isLoggedIn ? (
+          {/* 【修改點】桌面端顯示用戶名，只有登入時顯示 */}
+          {isLoggedIn && userName ? (
             <Link to="/member/info" className="hover:underline transition duration-150 font-semibold">{userName}</Link> 
           ) : (
-             <></>
+            // 如果未登入，這裡不顯示任何東西
+            <></>
           )}
 
           <Button variant="secondary" className="ml-2" onClick={handleAuthClick}>
@@ -141,17 +161,17 @@ function Header({ showSearchBar = false }) {
             </div>
             
             {/* **** 修正區塊 2: 獨立的會員名稱區域 (只在登入後顯示) **** */}
-            {isLoggedIn && (
-                <Link
-                    to="/member/info" 
-                    className="block px-6 pt-4 text-xl font-semibold text-gray-700 hover:text-primary transition"
-                    onClick={() => {
-                        setIsMenuOpen(false);
-                        navigate("/member/info"); 
-                    }}
-                >
-                    {userName}
-                </Link>
+            {isLoggedIn && userName && ( // 確保登入且有用戶名才顯示
+            <Link
+              to="/member/info" 
+              className="block px-6 pt-4 text-xl font-semibold text-gray-700 hover:text-primary transition"
+              onClick={() => {
+                setIsMenuOpen(false);
+                navigate("/member/info"); 
+              }}
+            >
+              {userName} {/* 加上歡迎詞更友善 */}
+            </Link>
             )}
             {/* ******************************************************** */}
 

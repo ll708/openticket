@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import backend.otp.filter.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -47,11 +48,22 @@ public class SecurityConfig {
     @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // 明確指定 CORS
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
 
+        // 【修正點 1: 將 exceptionHandling 移到這裡】
+        .exceptionHandling(exception -> exception
+            // 當用戶嘗試訪問需要認證但未提供有效認證時觸發
+            .authenticationEntryPoint((request, response, authException) -> {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 設置為 401
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"認證失敗或 Token 無效\"}");
+            })
+        )
+
+        // 【修正點 2: 只使用一個 authorizeHttpRequests 區塊】
+        .authorizeHttpRequests(auth -> auth
             // 允許所有 OPTIONS（Preflight 必須放行）
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
@@ -64,19 +76,22 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
                 "/member/register",
                 "/member/checkAc",
                 "/member/verify",
-                "/oauth2/**",
+                "/api/announcements",
                 "/api/announcements/**",
-                "/api/events/**"
+                "/api/events/**",
+                "/oauth2/**",
+                "/oauth2/**",
+                "/loginLog/add"
             ).permitAll()
 
             // 其他全部需要 JWT
             .anyRequest().authenticated()
         )
+        // 確保 JWT 過濾器被添加
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
 }
-
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();

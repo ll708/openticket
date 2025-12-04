@@ -1,14 +1,11 @@
-import MemberInfo from "../components/MemberInfo";
-import MemberSidebar from "../components/MemberSidebar";
-import RevisePage from "../components/RevisePage";
+import MemberInfo from "./MemberInfo";
+import MemberSidebar from "./MemberSidebar";
+import RevisePage from "./RevisePage";
 import { useTokenCheck } from "../hooks/useTokenCheck";
 import { useDarkMode } from "../hooks/useDarkMode";
 import "../Css/MemberPage.css";
 import { Route, Routes, Navigate } from "react-router-dom";
-import Header from '../components/Header'; 
-import Footer from '../components/Footer'; 
-import Top from '../components/ui/Top';
-import CollectPage from '../components/CollectPage';
+import CollectPage from "./CollectPage";
 
 function MemberPage() {
     // 每 5 分鐘檢查一次 token 是否過期
@@ -18,8 +15,6 @@ function MemberPage() {
     const [isDark, toggleDarkMode] = useDarkMode();
 
     return (
-        <>
-        <Header showSearchBar={true} /> 
         <div className="member-page-container">
             {/* 深色模式切換按鈕 */}
             <button
@@ -41,16 +36,13 @@ function MemberPage() {
                                 <Route index element={<Navigate to="info" replace />} />
                                 <Route path="info" element={<MemberInfo />} />
                                 <Route path="revise/:field" element={<RevisePage />} />
-                                <Route path="wishList" element={<CollectPage />}/>
+                                <Route path="wishList" element={<CollectPage />} />
                             </Routes>
                         </>
                     </div>
                 </div>
             </div>
         </div>
-        <Top />
-        <Footer />
-    </>
     );
 }
 
