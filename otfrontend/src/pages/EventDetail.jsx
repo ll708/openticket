@@ -20,19 +20,29 @@ export default function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-
+  
+  // 每次進入詳情頁時，呼叫 API 累加每日與總瀏覽量
+  useEffect(() => {
+    if (id) {
+      // 累加每日瀏覽量
+      fetch(`/api/events/${id}/daily-stats/view`, { method: 'POST' });
+      // 累加總瀏覽量
+      fetch(`/api/events/${id}/stats/view`, { method: 'POST' });
+    }
+  }, [id]);
+  
   // 獲取會員 ID
   useEffect(() => {
     if (isLoggedIn) {
       fetch('http://localhost:8080/member/profile', {
         credentials: 'include'
       })
-        .then(res => res.json())
-        .then(data => setMemberId(data.id))
-        .catch(err => console.error('獲取會員資料失敗:', err));
+      .then(res => res.json())
+      .then(data => setMemberId(data.id))
+      .catch(err => console.error('獲取會員資料失敗:', err));
     }
   }, [isLoggedIn]);
-
+  
   // 獲取活動資料
   useEffect(() => {
     window.scrollTo(0, 0);

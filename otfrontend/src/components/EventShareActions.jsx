@@ -42,6 +42,13 @@ export default function EventShareActions({ isFavorited, onFavoriteChange, isLog
     }
   };
 
+  // 分享時呼叫 API
+  const handleShare = () => {
+    if (!eventId) return;
+    fetch(`/api/events/${eventId}/daily-stats/share`, { method: 'POST' });
+    fetch(`/api/events/${eventId}/stats/share`, { method: 'POST' });
+  };
+
   return (
     <div className="flex flex-wrap justify-center gap-4 mt-4 px-4 items-center">
       {/* 收藏按鈕 */}
@@ -64,6 +71,7 @@ export default function EventShareActions({ isFavorited, onFavoriteChange, isLog
         rel="noopener noreferrer"
         title="Facebook 分享"
         aria-label="Facebook 分享"
+        onClick={handleShare}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"><path fillRule="evenodd" d="M13.619 21.666v-8.362h2.78l.415-3.26H13.62v-2.08c0-.944.26-1.587 1.6-1.587h1.708V3.46a23 23 0 0 0-2.49-.128c-2.464 0-4.15 1.519-4.15 4.308v2.404H7.5v3.259h2.787v8.362z" clipRule="evenodd"></path></svg>
       </a>
@@ -75,6 +83,7 @@ export default function EventShareActions({ isFavorited, onFavoriteChange, isLog
         rel="noopener noreferrer"
         title="Line 分享"
         aria-label="Line 分享"
+        onClick={handleShare}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"><path fill="currentColor" d="M19.511 5.407S14.304.661 7.014 4.497c-1.5.79-2.813 1.925-3.63 3.413-.883 1.605-1.422 3.918-.047 6.75 0 0 1.83 3.775 7.552 4.497 0 0 1.118 0 .978 1.213l.007 1.154a.522.522 0 0 0 .77.462c1.684-.894 5.807-3.354 8.826-7.378-.001-.007 3.32-4.865-1.959-9.2M9.021 13.46a.13.13 0 0 1-.13.129h-2.75a.13.13 0 0 1-.129-.129V9.29a.13.13 0 0 1 .129-.13h.77a.13.13 0 0 1 .128.13v3.143a.13.13 0 0 0 .13.13H8.89a.13.13 0 0 1 .13.128zm1.637-.009a.13.13 0 0 1-.129.129h-.77a.13.13 0 0 1-.129-.129V9.288a.13.13 0 0 1 .13-.128h.769a.13.13 0 0 1 .129.128zm4.632 0a.13.13 0 0 1-.129.129h-.933a.13.13 0 0 1-.107-.058l-1.532-2.31a.13.13 0 0 0-.21-.004.13.13 0 0 0-.027.076v2.164a.13.13 0 0 1-.037.09.13.13 0 0 1-.091.038h-.77a.13.13 0 0 1-.128-.128V9.288a.13.13 0 0 1 .128-.128h.931a.13.13 0 0 1 .108.057l1.533 2.31a.129.129 0 0 0 .236-.071V9.288a.13.13 0 0 1 .129-.128h.77a.13.13 0 0 1 .128.128zm3.506-3.435a.13.13 0 0 1-.13.128h-1.622a.13.13 0 0 0-.13.13v.479a.13.13 0 0 0 .13.129h1.623a.13.13 0 0 1 .13.128v.77a.13.13 0 0 1-.13.129h-1.753v.655h1.753a.13.13 0 0 1 .13.128v.77a.13.13 0 0 1-.13.128h-2.65a.13.13 0 0 1-.129-.128V9.246a.13.13 0 0 1 .129-.129h2.65a.13.13 0 0 1 .13.129z"></path></svg>
       </a>
@@ -85,6 +94,7 @@ export default function EventShareActions({ isFavorited, onFavoriteChange, isLog
         aria-label="分享連結"
         type="button"
         onClick={() => {
+          handleShare();
           const isWindows = navigator.userAgent.includes('Windows');
           if (navigator.share && !isWindows) {
             navigator.share({
