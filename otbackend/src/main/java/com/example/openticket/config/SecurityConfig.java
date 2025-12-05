@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/reservations").permitAll()
                 // 允許對所有活動和票種相關 API 的公共存取
-                .requestMatchers("/api/events/**", "/api/eventtickettype/**","/api/announcements/**","/api/log/session","/api/reservations","/api/reservations/items").permitAll()
+                .requestMatchers("/api/events/**", "/api/eventtickettype/**","/api/announcements/**","/api/log/session","/api/reservations","/api/reservations/create").permitAll()
                 // 允許 CORS 預檢請求
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() 
                 // 其他所有請求都需要身份驗證

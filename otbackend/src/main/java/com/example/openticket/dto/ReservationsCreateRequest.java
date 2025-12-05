@@ -8,8 +8,6 @@ import lombok.Data;
 public class ReservationsCreateRequest {
     private Long userId;
     private Long eventId;
-    // private Long eventTicketTypeId;
-    // private Integer quantity;
     private List<ReservationItemsCreateRequest> items;
 
 }

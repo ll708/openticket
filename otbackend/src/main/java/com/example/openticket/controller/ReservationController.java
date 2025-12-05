@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.openticket.dto.ReservationResponse;
+import com.example.openticket.dto.OrdersResponse;
 import com.example.openticket.dto.ReservationsCreateRequest;
+import com.example.openticket.entity.Orders;
+import com.example.openticket.entity.Reservations;
+import com.example.openticket.service.OrdersService;
 import com.example.openticket.service.ReservationsService;
 
 import jakarta.validation.Valid;
@@ -19,16 +22,39 @@ import jakarta.validation.Valid;
 public class ReservationController {
     @Autowired
     private ReservationsService reservationsService;
-
+    @Autowired
+    private OrdersService ordersService;
     /**
      * 處理創建預定單的 POST 請求
      * 請求路徑: POST /api/reservations/item
      * 接收: ReservationsCreateRequest (JSON 格式)
      * 回應: ReservationResponse (JSON 格式)
      */ 
-    @PostMapping("/items")
-    public ResponseEntity<ReservationResponse> createReservation(@RequestBody @Valid ReservationsCreateRequest request){
-        ReservationResponse response = reservationsService.createReservation(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    @PostMapping("/create")
+    public ResponseEntity<OrdersResponse> createReservationAndOrder(
+        @RequestBody @Valid ReservationsCreateRequest request){
+            // ReservationResponse response = reservationsService.createReservation(request);
+            // return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        Reservations newReservation;
+        Orders newOrder;
+        try {
+            newReservation = reservationsService.createReservation(request);
+            Long reservationId = newReservation.getId();
+            newOrder = ordersService.createOrder(reservationId);
+
+            // Long orderId = newOrder.getId();
+            OrdersResponse response = new OrdersResponse(
+                newOrder.getId(),
+                newOrder.getStatus(),
+                newReservation.getId()
+            );
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+
+        }catch(RuntimeException e){
+            System.err.println("Error during reservation and order creation: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 }

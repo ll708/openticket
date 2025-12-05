@@ -23,7 +23,6 @@ public class Reservations {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    // private OrderId orderId;//還未建立在本地資料庫
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -33,25 +32,11 @@ public class Reservations {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "event_ticket_type_id", nullable = false)
-    // private EventTicketType eventTicketType;
-
-    // @Column(name = "quantity")
-    // @NotNull(message = "數量不能為空")
-    // private int quantity;
-
-    @Column(name = "status")
-    private String status;
-
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    // @Column(name = "total_ticket_price")
-    // private BigDecimal totalTicketPrice;//單一票種的總價
 
     @Column(name = "totalAmount")
     private BigDecimal totalAmount;//所有票種的價格
@@ -84,30 +69,6 @@ public class Reservations {
         this.event = event;
     }
 
-    // public int getQuantity() {
-    //     return quantity;
-    // }
-
-    // public void setQuantity(int quantity) {
-    //     this.quantity = quantity;
-    // }
-
-    // public EventTicketType getEventTicketType() {
-    //     return eventTicketType;
-    // }
-
-    // public void setEventTicketType(EventTicketType eventTicketType) {
-    //     this.eventTicketType = eventTicketType;
-    // }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public LocalDateTime getExpiresAt() {
         return expiresAt;
     }
@@ -123,14 +84,6 @@ public class Reservations {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
-    // public BigDecimal getTotalTicketPrice() {
-    //     return totalTicketPrice;
-    // }
-
-    // public void setTotalTicketPrice(BigDecimal totalTicketPrice) {
-    //     this.totalTicketPrice = totalTicketPrice;
-    // }
 
     public BigDecimal getTotalAmount() {
         return totalAmount;

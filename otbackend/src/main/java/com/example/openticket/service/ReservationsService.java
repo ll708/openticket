@@ -39,7 +39,7 @@ public class ReservationsService {
 
     //建立Reservations
     @Transactional
-    public ReservationResponse createReservation(ReservationsCreateRequest request){
+    public Reservations createReservation(ReservationsCreateRequest request){
         // Reservations reservations = new Reservations();
         //查詢會員(會員先寫死)
         Member user = memberRepository.findById(3L) //request.getUserId()
@@ -49,15 +49,6 @@ public class ReservationsService {
         Event event = eventRepositoryJPA.findById(request.getEventId())
         .orElseThrow(() -> new RuntimeException("活動不存在" + request.getEventId()));
         
-        //查詢票種
-        // EventTicketType ticketType = eventTicketTypeRep.findById(request.getEventTicketTypeId())
-        // .orElseThrow(() -> new RuntimeException("票種不存在" + request.getEventTicketTypeId()));
-
-        //單一票種總價
-        // BigDecimal unitPrice = ticketType.getCustomprice(); 
-        // int quantity = request.getQuantity();
-        // BigDecimal singleTicketTypeTotalPrice = unitPrice.multiply(new BigDecimal(quantity));
-
         //所有票種總價
         BigDecimal calculatedTotalAmount = BigDecimal.ZERO;
 
@@ -74,7 +65,7 @@ public class ReservationsService {
         // reservation.setQuantity(quantity);
         // reservation.setTotalTicketPrice(singleTicketTypeTotalPrice);
         // reservation.setTotalAmount(totalAmount);
-        reservation.setStatus("PENDING");
+        // reservation.setStatus("PENDING");
         reservation.setCreatedAt(now);
         reservation.setExpiresAt(expiresAt);
 
@@ -103,7 +94,7 @@ public class ReservationsService {
         }
         reservation.setTotalAmount(calculatedTotalAmount);
         Reservations savedReservation = repositoryrepo.save(reservation);
-        return mapToReservationResponse(savedReservation);
+        return savedReservation;
     }
 
 
@@ -113,7 +104,7 @@ public class ReservationsService {
         response.setId(entity.getId());
         response.setUserId(entity.getUser().getId());
         response.setEventId(entity.getEvent().getId());
-        response.setStatus(entity.getStatus());
+        // response.setStatus(entity.getStatus());
         response.setExpiresAt(entity.getExpiresAt());
         response.setCreatedAt(entity.getCreatedAt());
         response.setTotalAmount(entity.getTotalAmount());

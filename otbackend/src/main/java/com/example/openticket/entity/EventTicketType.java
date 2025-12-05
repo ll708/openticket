@@ -41,6 +41,12 @@ public class EventTicketType {
     @Column(name = "created_at")
     private LocalDateTime createdat;
 
+    @Column(name = "is_early_bird")
+    private Boolean earlybirdticket;
+
+    @Column(name = "early_bird_config_id")
+    private Long earlybirdconfigId;
+
     public Long getId() {
         return id;
     }
@@ -95,5 +101,21 @@ public class EventTicketType {
 
     public void setCreatedat(LocalDateTime createdat) {
         this.createdat = createdat;
+    }
+
+    public Boolean getEarlybirdticket() {
+        return earlybirdticket;
+    }
+
+    public void setEarlybirdticket(Boolean earlybirdticket) {
+        this.earlybirdticket = earlybirdticket;
+    }
+
+    public Long getEarlybirdconfigId() {
+        return earlybirdconfigId;
+    }
+
+    public void setEarlybirdconfigId(Long earlybirdconfigId) {
+        this.earlybirdconfigId = earlybirdconfigId;
     }
 }
