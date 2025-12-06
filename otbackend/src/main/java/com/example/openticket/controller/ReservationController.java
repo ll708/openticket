@@ -35,7 +35,7 @@ public class ReservationController {
         @RequestBody @Valid ReservationsCreateRequest request){
             // ReservationResponse response = reservationsService.createReservation(request);
             // return new ResponseEntity<>(response, HttpStatus.CREATED);
-
+            System.out.println("Received reservation request: " + request);
         Reservations newReservation;
         Orders newOrder;
         try {
