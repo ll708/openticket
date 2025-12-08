@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../components/ToastContext';
 
 // --- 配置常數 ---
 const BASE_URL = 'http://localhost:8080';
@@ -149,6 +150,7 @@ export const useAuth = () => {
     // 我們無法直接依賴 authToken 狀態。
     // 我們改為依賴 isLoggedIn 狀態，並在載入時調用 getProfile 來驗證 Cookie。
     const [isLoading, setIsLoading] = useState(true);
+    const { showToast } = useToast();
     // 1. 登入函式：呼叫 API 並讓後端設置 Cookie
     const login = useCallback(async (account, password) => {
         const result = await actualApi.login(account, password);
@@ -189,25 +191,29 @@ export const useAuth = () => {
                 success = true;
                 // 登出成功，導航到首頁，然後讓路由守衛重定向（如果有的話）
                 targetPath = "/"; 
+                showToast("登出成功！");
             } else if (res.status === 403 || res.status === 401) {
                 // Token 過期或權限不足，雖然登出成功，但導航到登入頁
                 console.warn("Logout API returned 401/403, forcing login redirect.");
                 targetPath = "/login";
+                showToast("登出成功！");
             } else {
                 console.error('Logout API failed with status:', res.status);
                 // 登出 API 失敗，但我們已經清除了本地狀態，仍導航到首頁/登入頁
                 targetPath = "/";
+                showToast("登出成功！");
             }
 
         } catch (error) {
             // 處理網路錯誤，同樣導航
             console.error('Logout API 網路錯誤:', error);
             targetPath = "/";
+            showToast("登出成功！");
         } finally {
             // 【第 4 步】：無論成功失敗，最終執行導航
             navigate(targetPath);
         }
-    }, [navigate]);
+    }, [navigate, showToast]);
 
     // 3. 檢查持久化狀態 (元件首次載入時驗證 JWT Cookie 的有效性)
     useEffect(() => {

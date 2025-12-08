@@ -9,13 +9,14 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import MemberPage from './pages/MemberPage';
 import SelectTicket from './pages/SelectTicket';
+import { ToastProvider } from './components/ToastContext';
 
 
 function App() {
  return (
   <BrowserRouter> 
-
-   <Routes>
+    <ToastProvider>
+    <Routes>
     <Route path="/" element={<Home />} />
     <Route path="/news" element={<News />} /> 
     <Route path="/events" element={<Events />} />
@@ -27,8 +28,8 @@ function App() {
     <Route path="/Member/*" element={<MemberPage />} />
     <Route path="/Ticket" element={<SelectTicket />} />
     
-   </Routes>
-
+    </Routes>
+    </ToastProvider>
   </BrowserRouter>
  );
 }

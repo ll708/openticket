@@ -43,7 +43,7 @@ function Privacy() {
             <section>
               <h2 className="text-xl font-semibold mb-3">三、 聯絡我們</h2>
               <p>
-                如您對本政策有任何疑問，請透過 <a href="mailto:openticketoffice@gmail.com" className="text-primary hover:underline">contact@openticket.com</a> 與我們聯絡。
+                如您對本政策有任何疑問，請透過 <a href="mailto:openticketoffice@gmail.com" className="text-primary hover:underline">openticketoffice@gmail.com</a> 與我們聯絡。
               </p>
             </section>
             
