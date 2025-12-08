@@ -10,7 +10,7 @@ function Footer() {
     <div className="space-x-4">
 
       {/* 內部路由連結 */}
-      <a href="mailto:contact@openticket.com" className="hover:underline">聯絡信箱</a>
+      <a href="mailto:openticketoffice@gmail.com" className="hover:underline">聯絡信箱</a>
       <RouterLink to="/FAQList" className="hover:underline transition duration-150">常見問題</RouterLink>
       <RouterLink to="/Privacy" className="hover:underline transition duration-150">Privacy</RouterLink>
     </div>
