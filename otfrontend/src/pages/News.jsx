@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import Top from '../components/ui/Top';
 import AnnouncementList from '../components/AnnouncementList'; 
 import AnnoView from '../components/AnnoView';
+import Breadcrumb from '../components/Breadcrumb';
 
 
 function News() {
@@ -26,6 +27,14 @@ function News() {
     <>
       <Header showSearchBar={true} /> 
       <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen font-sans"> 
+        <Breadcrumb
+                            items={[
+                                { label: "首頁", to: "/" },
+                                { label: "最新消息" }
+                            ]}
+                            className="mb-6 text-gray-500"
+                        />
+        
         <main className="flex-grow">
           
           {selectedAnnouncement ? (

@@ -10,14 +10,16 @@ public class Announcement {
     private Long id;
     private String title;
     private String content;
-    private LocalDateTime created_at; // 與資料庫欄位名稱保持一致
+    private LocalDateTime created_at; 
+    private Long user_id;
 
     // 完整的建構函式 (與 Repository 中的 mapRowToAnnouncement 匹配)
-    public Announcement(Long id, String title, String content, LocalDateTime created_at) {
+    public Announcement(Long id, String title, String content, LocalDateTime created_at, Long user_id) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.created_at = created_at;
+        this.user_id = user_id;
     }
 
     // 預設建構函式
@@ -34,6 +36,14 @@ public class Announcement {
         this.id = id;
     }
 
+    public Long getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
+    }
+    
     public String getTitle() {
         return title;
     }

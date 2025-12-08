@@ -3,6 +3,7 @@ import FAQItem from '../components/FAQItem';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Top from '../components/ui/Top';
+import Breadcrumb from '../components/Breadcrumb';
 
 
 const faqData = [
@@ -19,7 +20,13 @@ const FAQList = () => {
     <>
       <Header showSearchBar={true} /> 
       <div className="max-w-4xl mx-auto p-6 bg-white">
-        
+        <Breadcrumb
+                            items={[
+                                { label: "首頁", to: "/" },
+                                { label: "常見問題" }
+                            ]}
+                            className="mb-6 text-gray-500"
+                        />
         {/* 標題區塊 */}
         <h1 className="text-3xl font-bold text-gray-800 mb-8 border-b-4 border-primary pb-2 inline-block">
           常見問題

@@ -30,7 +30,8 @@ public class AnnouncementRepository {
             rs.getLong("id"),
             rs.getString("title"),
             rs.getString("content"),
-            rs.getTimestamp("created_at").toLocalDateTime()
+            rs.getTimestamp("created_at").toLocalDateTime(),
+            rs.getLong("user_id")
         );
     }
 
@@ -41,7 +42,7 @@ public class AnnouncementRepository {
      */
     public List<Announcement> findLatest(Integer limit) {
         // 基礎 SQL 語句
-        String baseSql = "SELECT id, title, content, created_at FROM announcement ORDER BY created_at DESC";
+        String baseSql = "SELECT id, title, content, created_at, user_id FROM announcement ORDER BY created_at DESC";
 
         // 參數列表
         List<Object> params = new ArrayList<>();

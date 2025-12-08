@@ -24,7 +24,7 @@ function AnnouncementList({ limit = null, isFullPage = false, onSelectAnnounceme
                 if (limit) {
                     url += `?limit=${limit}`; 
                 }
-                console.log("Fetching announcements from URL:", url);
+                // console.log("Fetching announcements from URL:", url);
                 const response = await fetch(url); 
                 
                 if (!response.ok) {
@@ -42,7 +42,7 @@ function AnnouncementList({ limit = null, isFullPage = false, onSelectAnnounceme
                         day: '2-digit',
                     }).replace(/\//g, '/'), // 確保使用斜線分隔
                     // 根據標題判斷標籤
-                    tag: ann.title.includes('公告') ? '系統公告' : '票務公告',
+                    tag: (ann.user_id === 1 || ann.user_id === 3) ? '系統公告' : '活動公告',
                 }));
 
                 setAnnouncements(formattedData);
