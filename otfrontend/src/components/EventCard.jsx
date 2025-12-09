@@ -21,9 +21,9 @@ export default function EventCard({ event, onClick }) {
             </div>
             <div className="data p-4">
                 {/* 活動日期 (假設 eventStart 已經是格式化好的字串) */}
-                <div className="date text-gray-500 text-sm mb-1">{event.eventStart || "日期未定"}</div>
-                {/* 活動標題 */}
-                <div className="font-bold text-xl text-gray-900 leading-snug line-clamp-2">
+                <div className="date text-gray-500 text-sm mb-1 h-5">{event.eventStart || "日期未定"}</div>
+                {/* 活動標題 - 固定兩行高度 */}
+                <div className="font-bold text-xl text-gray-900 leading-snug line-clamp-2 h-14">
                     {event.title}
                 </div>
             </div>

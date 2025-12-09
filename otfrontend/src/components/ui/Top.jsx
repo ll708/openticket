@@ -36,7 +36,7 @@ const Top = () => {
   // 按鈕的樣式設計
   const buttonClasses = `
     fixed // 保持位置不動
-    bottom-6 // 距離底部 1.5rem
+    bottom-10 // 距離底部 
     right-6 // 距離右側 1.5rem
     p-3 // 填充
     rounded-full // 圓形

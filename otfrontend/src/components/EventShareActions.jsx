@@ -1,16 +1,18 @@
 import React from "react";
+import { useToast } from "./ToastContext";
 
 export default function EventShareActions({ isFavorited, onFavoriteChange, isLoggedIn, memberId, eventId }) {
+  const { showToast } = useToast();
   
   // 切換收藏狀態
   const handleFavorite = async () => {
     if (!isLoggedIn) {
-      alert('請先登入再收藏');
+      showToast('請先登入再收藏');
       return;
     }
 
     if (!memberId || !eventId) {
-      alert('資料載入中，請稍後再試');
+      showToast('資料載入中，請稍後再試');
       return;
     }
 
@@ -32,13 +34,13 @@ export default function EventShareActions({ isFavorited, onFavoriteChange, isLog
       if (data.success) {
         // 切換本地狀態
         onFavoriteChange(prev => !prev);
-        alert(data.message);
+        showToast(data.message);
       } else {
-        alert(data.message || '操作失敗，請稍後再試');
+        showToast(data.message || '操作失敗，請稍後再試');
       }
     } catch (error) {
       console.error('收藏操作失敗:', error);
-      alert('網路錯誤，請稍後再試');
+      showToast('網路錯誤，請稍後再試');
     }
   };
 

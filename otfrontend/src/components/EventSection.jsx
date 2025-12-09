@@ -43,14 +43,14 @@ function DetailedEventCard({ event, onClick }) {
           <img
             src={event.image || "https://placehold.co/600x400/eeeeee/333333?text=No+Image"}
             alt={event.title}
-            className="w-full h-48 object-cover rounded-t-xl"
+            className="w-full h-auto object-contain rounded-t-xl"
             onError={e => (e.target.src = "/images/no-image1.png")}
           />
           {ArrowIcon}
         </div>
         <div className="data p-4">
-          <div className="date text-gray-500 text-sm mb-1">{event.eventStart || "日期未定"}</div>
-          <div className="font-bold text-xl text-gray-900 leading-snug line-clamp-2">
+          <div className="date text-gray-500 text-sm mb-1 h-5">{event.eventStart || "日期未定"}</div>
+          <div className="font-bold text-xl text-gray-900 leading-snug line-clamp-2 h-14">
             {event.title}
           </div>
         </div>
@@ -172,7 +172,7 @@ function EventSection() {
         {noEvents ? (
           <p className="text-gray-400 mt-8">目前沒有熱門活動資訊。</p>
         ) : (
-          <div className="overflow-hidden">
+          <div className="overflow-visible py-4">
             <div 
               className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 transition-all duration-500 ease-in-out ${
                 slideDirection === 'left' ? 'animate-slide-left' : 'animate-slide-right'

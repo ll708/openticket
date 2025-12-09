@@ -8,12 +8,14 @@ import EventHero from "../components/EventHero";
 import EventShareActions from "../components/EventShareActions";
 import EventDetailTabs from "../components/EventDetailTabs";
 import { useEventDetail } from "../hooks/useEventDetail";
+import { useToast } from "../components/ToastContext";
 
 
 export default function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { showToast } = useToast();
   
   const {
     event,
@@ -40,8 +42,27 @@ export default function EventDetail() {
 
   const handlePurchase = () => {
     if (!isLoggedIn) {
-      alert('請先登入再購票');
-      navigate('/login', { state: { redirect: `/events/detail/${event.id}?goTicket=1` } });
+      let countdown = 3;
+      let timer = null;
+      
+      const handleClick = () => {
+        // 清除倒數計時器
+        if (timer) clearInterval(timer);
+        navigate('/login', { state: { redirect: `/events/detail/${event.id}?goTicket=1` } });
+      };
+      
+      showToast(`請先登入再購票，${countdown}秒後跳轉...`, handleClick);
+      
+      timer = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          showToast(`請先登入再購票，${countdown}秒後跳轉...`, handleClick);
+        } else {
+          clearInterval(timer);
+          navigate('/login', { state: { redirect: `/events/detail/${event.id}?goTicket=1` } });
+        }
+      }, 1000);
+      
       return;
     }
     navigate(`/Ticket?eventId=${event.id}`);

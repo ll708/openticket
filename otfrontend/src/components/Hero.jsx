@@ -1,23 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
-// 引入需要的圖標
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // =========================================================
-// 圖片載入模式配置
+// 【輪播配置】- 圖片來源設定
 // =========================================================
+// 切換圖片來源：true = 本地硬編碼，false = 從後端 API 載入
 const USE_HARDCODED_IMAGES = true;
 
+// 本地圖片路徑（當 USE_HARDCODED_IMAGES = true 時使用）
 const HARDCODED_IMAGE_PATHS = [
     '/images/test.jpg',
     '/images/test_2.jpg',
     '/images/test_3.jpg',
 ];
 
+// 後端 API 配置（當 USE_HARDCODED_IMAGES = false 時使用）
 const REMOTE_API_BASE_URL = 'http://localhost:8080';
 const REMOTE_API_ENDPOINT = `${REMOTE_API_BASE_URL}/api/hero-images`;
+
+// 輪播切換速度：8000ms = 8秒自動切換一次
 const SLIDE_INTERVAL = 8000;
 
+// 備用圖片（當本地/API 圖片載入失敗時使用）
 const FALLBACK_IMAGES = [
     "https://static.tixcraft.com/images/banner/image_ad2afde95404171db0d1a5eb3d307790.jpg",
 ];
@@ -91,24 +96,36 @@ function Hero() {
     return (
         <section className="relative w-full flex flex-col justify-center items-center overflow-hidden bg-black">
             
-            {/* 容器：控制高度
-               Mobile: aspect-[16/9] (確保寬螢幕比例，不切圖)
-               Desktop: h-screen (全螢幕)
+            {/* 
+            【主容器】
+            - w-full: 寬度 100% 配合視窗寬度
+            - paddingBottom: 43.53% = 根據圖片比例 850:370 計算（370÷850×100）
+            - 使用 padding-bottom 技巧保持寬高比，讓容器自動計算高度
             */}
-            <div className="relative w-full aspect-[16/9] md:aspect-auto md:h-[75vh] lg:h-screen">
+            <div className="relative w-full" style={{ paddingBottom: '43.53%' }}>
                 
-                {/* 背景圖片層 */}
+                {/* 
+                【背景圖片層】
+                - 疊加所有圖片，通過 opacity 控制顯示/隱藏
+                - 使用淡入淡出動畫 (transition: opacity 1s)
+                */}
                 <div className="absolute inset-0 z-0 w-full h-full">
                     {activeImages.map((imageUrl, index) => (
                         <div
                             key={index}
                             className="w-full h-full absolute top-0 left-0"
                             style={{
+                                // 設定背景圖片
                                 backgroundImage: `url(${imageUrl})`,
-                                backgroundSize: 'cover',
+                                // contain: 完整顯示圖片，不切邊（可能有空白）
+                                backgroundSize: 'contain',
+                                // 圖片居中
                                 backgroundPosition: 'center',
+                                // 不重複平鋪
                                 backgroundRepeat: 'no-repeat',
+                                // 淡入淡出動畫 1 秒
                                 transition: 'opacity 1s ease-in-out',
+                                // 當前圖片顯示（opacity=1），其他隱藏（opacity=0）
                                 opacity: index === currentImageIndex ? 1 : 0,
                             }}
                         />

@@ -44,9 +44,9 @@ public class WishListController {
             res.put("success", true);
 
             if (action == WishAction.ADDED) {
-                res.put("message", "成功加入最愛!");
+                res.put("message", "成功加入最愛！");
             } else {
-                res.put("message", "成功刪除最愛!");
+                res.put("message", "成功刪除最愛！");
             }
 
         } catch (Exception e) {
