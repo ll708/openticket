@@ -79,6 +79,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
                 "/api/announcements",
                 "/api/announcements/**",
                 "/api/events/**",
+                "/api/images/**",
                 "/oauth2/**",
                 "/oauth2/**",
                 "/loginLog/add"
