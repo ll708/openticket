@@ -4,6 +4,8 @@ import backend.otp.dto.Event;
 import backend.otp.dto.EventStatsDto;
 import backend.otp.dto.EventDailyStatsDto;
 import backend.otp.repository.EventRepository;
+import backend.otp.repository.EventDetailRepository;
+import backend.otp.repository.EventRepositoryJPA;
 import backend.otp.service.EventStatsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
-
 import java.util.List;
 
 @RestController
@@ -20,26 +21,42 @@ import java.util.List;
 public class EventController {
 	private final EventRepository eventRepository;
 	private final EventStatsService eventStatsService;
+	private final EventDetailRepository eventDetailRepository;
+	private final EventRepositoryJPA eventRepositoryJPA;
 
-	public EventController(EventRepository eventRepository, EventStatsService eventStatsService) {
+	public EventController(EventRepository eventRepository, EventStatsService eventStatsService,
+			EventDetailRepository eventDetailRepository, EventRepositoryJPA eventRepositoryJPA) {
 		this.eventRepository = eventRepository;
 		this.eventStatsService = eventStatsService;
+		this.eventDetailRepository = eventDetailRepository;
+		this.eventRepositoryJPA = eventRepositoryJPA;
 	}
-	
+
 	@GetMapping
 	public List<Event> getAllEvents() {
 		return eventRepository.findAll();
 	}
-	
+
+	// 取得單一活動 (JPA)
+	@GetMapping("/detail/{id}")
+	public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+		return eventRepositoryJPA.findById(id)
+				.map(eventJpa -> new Event(
+						eventJpa.getId(),
+						"/images/test.jpg", // 目前圖片路徑寫死，與 JDBC 版本一致
+						eventJpa.getAddress(),
+						eventJpa.getEvent_start() != null ? eventJpa.getEvent_start().toString() : "",
+						eventJpa.getTitle()))
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
 	// 取得單一活動介紹內容
 	@GetMapping("/intro/{id}")
 	public ResponseEntity<String> getEventIntro(@PathVariable Long id) {
-		String intro = eventRepository.EventIntro(id);
-		if (intro != null) {
-			return ResponseEntity.ok(intro);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		return eventDetailRepository.findByEventId(id)
+				.map(detail -> ResponseEntity.ok(detail.getContent()))
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	// 取得活動總瀏覽/分享數
@@ -66,9 +83,8 @@ public class EventController {
 	// 取得活動每日瀏覽/分享數
 	@GetMapping("/{eventId}/daily-stats")
 	public ResponseEntity<EventDailyStatsDto> getDailyStats(
-		@PathVariable Long eventId,
-		@org.springframework.web.bind.annotation.RequestParam String date
-	) {
+			@PathVariable Long eventId,
+			@org.springframework.web.bind.annotation.RequestParam String date) {
 		EventDailyStatsDto stats = eventStatsService.getDailyStats(eventId, date);
 		return ResponseEntity.ok(stats);
 	}
