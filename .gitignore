@@ -1,0 +1,31 @@
+# Node
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Env files
+.env
+.env.*
+
+# Logs
+*.log
+
+# Test coverage
+coverage/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Tool caches
+*.cache
+.parcel-cache/
+.turbo/
+
+# Application properties
+backend/src/main/resources/application.properties
+SMB_IMAGE_API_GUIDE_v3.md
