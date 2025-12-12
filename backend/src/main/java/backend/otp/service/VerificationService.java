@@ -14,18 +14,12 @@ public class VerificationService {
 
     private static final String SEND_TIME_PREFIX = "verification:send_time:";
     private static final String ATTEMPT_PREFIX = "verification:attempts:";
-<<<<<<< HEAD
     private static final String LOCK_PREFIX = "verification:lock:";
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
     private static final int MAX_ATTEMPTS = 5;
     private static final long SEND_COOLDOWN = 60; // 60秒
     private static final long ATTEMPT_EXPIRE = 300; // 5分鐘
-<<<<<<< HEAD
     private static final long LOCK_DURATION = 300; // 鎖定5分鐘
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
     /**
      * 檢查是否可以發送驗證碼 (60秒冷卻)
@@ -54,7 +48,6 @@ public class VerificationService {
     }
 
     /**
-<<<<<<< HEAD
      * 檢查是否被鎖定
      */
     public boolean isLocked(String email) {
@@ -87,14 +80,6 @@ public class VerificationService {
         }
         int attempts = Integer.parseInt(value.toString());
         return attempts < MAX_ATTEMPTS;
-=======
-     * 檢查驗證碼嘗試次數
-     */
-    public boolean canAttempt(String email) {
-        String key = ATTEMPT_PREFIX + email;
-        Integer attempts = (Integer) redisTemplate.opsForValue().get(key);
-        return attempts == null || attempts < MAX_ATTEMPTS;
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
     }
 
     /**
@@ -109,19 +94,15 @@ public class VerificationService {
             redisTemplate.expire(key, ATTEMPT_EXPIRE, TimeUnit.SECONDS);
         }
         
-<<<<<<< HEAD
         // 如果達到最大嘗試次數,設定鎖定
         if (attempts >= MAX_ATTEMPTS) {
             lockAccount(email);
         }
         
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
         return attempts.intValue();
     }
 
     /**
-<<<<<<< HEAD
      * 鎖定帳號(5分鐘)
      */
     private void lockAccount(String email) {
@@ -137,13 +118,6 @@ public class VerificationService {
         String lockKey = LOCK_PREFIX + email;
         redisTemplate.delete(attemptKey);
         redisTemplate.delete(lockKey);
-=======
-     * 清除嘗試次數 (驗證成功後)
-     */
-    public void clearAttempts(String email) {
-        String key = ATTEMPT_PREFIX + email;
-        redisTemplate.delete(key);
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
     }
 
     /**
@@ -151,14 +125,9 @@ public class VerificationService {
      */
     public int getRemainingAttempts(String email) {
         String key = ATTEMPT_PREFIX + email;
-<<<<<<< HEAD
         Object value = redisTemplate.opsForValue().get(key);
         int attempts = (value != null) ? Integer.parseInt(value.toString()) : 0;
         return MAX_ATTEMPTS - attempts;
-=======
-        Integer attempts = (Integer) redisTemplate.opsForValue().get(key);
-        return MAX_ATTEMPTS - (attempts != null ? attempts : 0);
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
     }
 
 }

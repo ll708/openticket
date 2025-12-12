@@ -61,15 +61,9 @@ public class Reservations {
         this.user = user;
     }
 
-<<<<<<< HEAD
-    // public EventJpa getEvent() {
-    //     return event;
-    // }
-=======
     public EventJpa getEvent() {
         return event;
     }
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
     public void setEvent(EventJpa event) {
         this.event = event;

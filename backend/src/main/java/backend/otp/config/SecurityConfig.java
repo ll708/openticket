@@ -84,13 +84,11 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
                 "/member/verify-email-code", // 新增
                 "/api/announcements",
                 "/api/announcements/**",
-<<<<<<< HEAD
                 "/api/events/**",
                 "/api/images/**",
                 "/oauth2/**",
                 "/oauth2/**",
-                "/loginLog/add"
-=======
+                "/loginLog/add",
                 "/api/events/**", 
                 "/api/images/**",
                 "/oauth2/**",
@@ -98,7 +96,6 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
                 "/loginLog/add",
                 "/swagger-ui/**",
                 "/v3/api-docs/**"
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
             ).permitAll()
 
             // 其他全部需要 JWT

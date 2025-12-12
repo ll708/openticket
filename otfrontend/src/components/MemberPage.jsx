@@ -6,10 +6,7 @@ import { useDarkMode } from "../hooks/useDarkMode";
 import "../Css/MemberPage.css";
 import { Route, Routes, Navigate } from "react-router-dom";
 import CollectPage from "./CollectPage";
-<<<<<<< HEAD
 import CheckoutOrder from "./CheckoutOrder";
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
 function MemberPage() {
     // 每 5 分鐘檢查一次 token 是否過期
@@ -41,10 +38,7 @@ function MemberPage() {
                                 <Route path="info" element={<MemberInfo />} />
                                 <Route path="revise/:field" element={<RevisePage />} />
                                 <Route path="wishList" element={<CollectPage />} />
-<<<<<<< HEAD
                                 <Route path="checkoutOrders" element={<CheckoutOrder />} />
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
                             </Routes>
                         </>
                     </div>

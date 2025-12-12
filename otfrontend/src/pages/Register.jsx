@@ -17,11 +17,8 @@ function Register() {
     const [verificationCode, setVerificationCode] = useState("");
     const [countdown, setCountdown] = useState(0);
     const [verifiedEmail, setVerifiedEmail] = useState("");
-<<<<<<< HEAD
     const [isLocked, setIsLocked] = useState(false);
     const [lockCountdown, setLockCountdown] = useState(0);
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
     // 表單欄位
     const [email_f, setEmail_f] = useState("");
@@ -242,7 +239,6 @@ function Register() {
 
                 showAlert("✅ 信箱驗證成功,請在 10 分鐘內完成註冊", "success");
             } else {
-<<<<<<< HEAD
                 // 檢查是否被鎖定
                 if (data.locked) {
                     setIsLocked(true);
@@ -266,18 +262,6 @@ function Register() {
                 } else if (data.remainingAttempts !== undefined) {
                     setRemainingAttempts(data.remainingAttempts);
                     showAlert(`❌ ${data.message}`, "error");
-=======
-                if (data.remainingAttempts !== undefined) {
-                    setRemainingAttempts(data.remainingAttempts);
-                    showAlert(`❌ ${data.message}`, "error");
-
-                    if (data.remainingAttempts === 0) {
-                        setTimeout(() => {
-                            setVerificationStep(1);
-                            setVerificationCode("");
-                        }, 2000);
-                    }
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
                 } else {
                     showAlert(`❌ ${data.message}`, "error");
                 }
@@ -503,7 +487,6 @@ function Register() {
                                         }}
                                         placeholder="請輸入6位數驗證碼"
                                         maxLength="6"
-<<<<<<< HEAD
                                         disabled={isLoading || isLocked}
                                     />
                                     {isLocked ? (
@@ -521,11 +504,6 @@ function Register() {
                                             請等待 <strong>{Math.floor(lockCountdown / 60)}:{String(lockCountdown % 60).padStart(2, '0')}</strong> 後再試
                                         </div>
                                     ) : remainingAttempts < 5 && (
-=======
-                                        disabled={isLoading}
-                                    />
-                                    {remainingAttempts < 5 && (
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
                                         <div className="attempts-warning">
                                             ⚠️ 剩餘嘗試次數: {remainingAttempts} 次
                                         </div>
@@ -536,7 +514,6 @@ function Register() {
                                     type="button"
                                     className="btn-primary"
                                     onClick={verifyCode}
-<<<<<<< HEAD
                                     disabled={isLoading || verificationCode.length !== 6 || isLocked}
                                 >
                                     {isLoading ? "驗證中..." : isLocked ? "已鎖定" : "驗證"}
@@ -548,15 +525,6 @@ function Register() {
                                             鎖定中,無法重新發送
                                         </p>
                                     ) : countdown > 0 ? (
-=======
-                                    disabled={isLoading || verificationCode.length !== 6}
-                                >
-                                    {isLoading ? "驗證中..." : "驗證"}
-                                </button>
-
-                                <div className="resend-section">
-                                    {countdown > 0 ? (
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
                                         <p className="countdown-text">
                                             {countdown} 秒後可重新發送
                                         </p>
@@ -567,11 +535,8 @@ function Register() {
                                             onClick={() => {
                                                 setVerificationStep(1);
                                                 setVerificationCode("");
-<<<<<<< HEAD
                                                 setIsLocked(false);
                                                 setLockCountdown(0);
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
                                             }}
                                         >
                                             重新發送驗證碼

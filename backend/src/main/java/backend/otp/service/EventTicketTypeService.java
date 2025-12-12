@@ -2,11 +2,7 @@ package backend.otp.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-<<<<<<< HEAD
-import java.time.LocalDate;
-=======
 import java.time.LocalDateTime;
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -157,17 +153,6 @@ public class EventTicketTypeService {
         }
 
         // 判斷是否在早鳥期間內
-<<<<<<< HEAD
-        LocalDate event_start = ett.getEvent().getEvent_start();
-        LocalDate now = LocalDate.now();
-
-        int durationDays = config.getDuration_days();
-        // 早鳥結束時間 = 活動開始日期 - 提前天數
-        LocalDate earlyBirdStart = event_start.minusDays(durationDays);
-
-        boolean inEarlyBird = now.isAfter(earlyBirdStart) && now.isBefore(event_start);
-
-=======
         LocalDateTime saleStart = ett.getEvent().getSale_start(); // 假設 Event 中有此方法
         if (saleStart == null) {
             // 如果找不到開賣時間，則不執行早鳥邏輯
@@ -182,7 +167,6 @@ public class EventTicketTypeService {
         boolean inEarlyBird = 
             (now.isEqual(saleStart) || now.isAfter(saleStart)) && now.isBefore(earlyBirdEnd);
         
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
         if (!inEarlyBird) {
             return basePrice.setScale(2, RoundingMode.HALF_UP);
         }
@@ -216,17 +200,12 @@ public class EventTicketTypeService {
 
         dto.setEarlyBirdEnabled(earlyBirdEnabled);
         dto.setDiscountRate(
-<<<<<<< HEAD
-                earlyBirdEnabled ? (config.getDiscount_rate() != null ? config.getDiscount_rate() : BigDecimal.ZERO)
-                        : BigDecimal.ZERO);
-=======
                 earlyBirdEnabled ? (
                     config.getDiscount_rate() != null ? 
                     config.getDiscount_rate() : BigDecimal.ZERO)
                         : BigDecimal.ZERO);
 
         
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
         dto.setFinalPrice(calculateFinalPrice(ett));
 
         return dto;

@@ -122,8 +122,6 @@
             <version>0.12.0</version>
         </dependency>
 
-<<<<<<< HEAD
-=======
         <!-- 做Swagger要加的 -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -132,7 +130,6 @@
         </dependency>
         <!-- http://localhost:8080/swagger-ui/index.html -->
 
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
     </dependencies>
 
     <build>

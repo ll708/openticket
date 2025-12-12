@@ -1,69 +1,27 @@
 package backend.otp.controller;
 
-<<<<<<< HEAD
-import backend.otp.dto.Event;
-import backend.otp.dto.EventStatsDto;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import backend.otp.dto.EventDailyStatsDto;
-import backend.otp.repository.EventRepository;
-=======
 import backend.otp.dto.EventDto;
 import backend.otp.dto.EventStatsDto;
-import backend.otp.dto.EventDailyStatsDto;
+import backend.otp.entity.EventJpa;
+import backend.otp.entity.EventTitlePageEntity;
 import backend.otp.repository.EventDetailRepository;
 import backend.otp.repository.EventRepositoryJPA;
 import backend.otp.repository.EventTitlePageRepository;
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 import backend.otp.service.EventStatsService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-
-<<<<<<< HEAD
-
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/events")
-public class EventController {
-	private final EventRepository eventRepository;
-	private final EventStatsService eventStatsService;
-
-	public EventController(EventRepository eventRepository, EventStatsService eventStatsService) {
-		this.eventRepository = eventRepository;
-		this.eventStatsService = eventStatsService;
-	}
-	
-	@GetMapping
-	public List<Event> getAllEvents() {
-		return eventRepository.findAll();
-	}
-	
-	// 取得單一活動介紹內容
-	@GetMapping("/intro/{id}")
-	public ResponseEntity<String> getEventIntro(@PathVariable Long id) {
-		String intro = eventRepository.EventIntro(id);
-		if (intro != null) {
-			return ResponseEntity.ok(intro);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
-
-	// 取得活動總瀏覽/分享數
-	@GetMapping("/{eventId}/stats")
-	public ResponseEntity<EventStatsDto> getEventStats(@PathVariable Long eventId) {
-=======
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-import java.util.Comparator;
-import backend.otp.entity.EventJpa;
-import backend.otp.entity.EventTitlePageEntity;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -175,81 +133,52 @@ public class EventController {
 	@GetMapping("/{eventId}/stats")
 	public ResponseEntity<EventStatsDto> getEventStats(
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long eventId) {
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 		EventStatsDto stats = eventStatsService.getStats(eventId);
 		return ResponseEntity.ok(stats);
 	}
 
 	// 活動瀏覽量 +1
-<<<<<<< HEAD
-	@PostMapping("/{eventId}/stats/view")
-	public ResponseEntity<Void> addView(@PathVariable Long eventId) {
-=======
 	@Operation(summary = "活動瀏覽量 +1", description = "指定活動的瀏覽量加 1")
 	@PostMapping("/{eventId}/stats/view")
 	public ResponseEntity<Void> addView(
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long eventId) {
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 		eventStatsService.addView(eventId);
 		return ResponseEntity.ok().build();
 	}
 
 	// 活動分享量 +1
-<<<<<<< HEAD
-	@PostMapping("/{eventId}/stats/share")
-	public ResponseEntity<Void> addShare(@PathVariable Long eventId) {
-=======
 	@Operation(summary = "活動分享量 +1", description = "指定活動的分享量加 1")
 	@PostMapping("/{eventId}/stats/share")
 	public ResponseEntity<Void> addShare(
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long eventId) {
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 		eventStatsService.addShare(eventId);
 		return ResponseEntity.ok().build();
 	}
 
 	// 取得活動每日瀏覽/分享數
-<<<<<<< HEAD
-	@GetMapping("/{eventId}/daily-stats")
-	public ResponseEntity<EventDailyStatsDto> getDailyStats(
-		@PathVariable Long eventId,
-		@org.springframework.web.bind.annotation.RequestParam String date
-	) {
-=======
 	@Operation(summary = "取得活動每日瀏覽/分享數", description = "取得指定活動在指定日期的每日瀏覽與分享數")
 	@GetMapping("/{eventId}/daily-stats")
 	public ResponseEntity<EventDailyStatsDto> getDailyStats(
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long eventId,
 			@Parameter(description = "日期 (yyyy-MM-dd)", required = true) @org.springframework.web.bind.annotation.RequestParam String date) {
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 		EventDailyStatsDto stats = eventStatsService.getDailyStats(eventId, date);
 		return ResponseEntity.ok(stats);
 	}
 
 	// 活動每日瀏覽量 +1
-<<<<<<< HEAD
-	@PostMapping("/{eventId}/daily-stats/view")
-	public ResponseEntity<Void> addDailyView(@PathVariable Long eventId) {
-=======
 	@Operation(summary = "活動每日瀏覽量 +1", description = "指定活動在今日的瀏覽量加 1")
 	@PostMapping("/{eventId}/daily-stats/view")
 	public ResponseEntity<Void> addDailyView(
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long eventId) {
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 		eventStatsService.addDailyView(eventId);
 		return ResponseEntity.ok().build();
 	}
 
 	// 活動每日分享量 +1
-<<<<<<< HEAD
-	@PostMapping("/{eventId}/daily-stats/share")
-	public ResponseEntity<Void> addDailyShare(@PathVariable Long eventId) {
-=======
 	@Operation(summary = "活動每日分享量 +1", description = "指定活動在今日的分享量加 1")
 	@PostMapping("/{eventId}/daily-stats/share")
 	public ResponseEntity<Void> addDailyShare(
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long eventId) {
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 		eventStatsService.addDailyShare(eventId);
 		return ResponseEntity.ok().build();
 	}

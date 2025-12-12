@@ -156,14 +156,11 @@ public class ReservationsService {
         return response;
     }
 
-<<<<<<< HEAD
     //用userId檢索reservationId
     public List<Long> searchReservationId (Long userId) {
         return repositoryrepo.findAllIdByUser_Id(userId);
     } 
 
-=======
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 }
 
 // 無法一次紀錄兩種不同的票種

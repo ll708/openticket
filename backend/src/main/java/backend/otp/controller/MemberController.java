@@ -504,7 +504,6 @@ public class MemberController {
             response.put("message", "Token 已過期,請重新發送驗證碼");
             return ResponseEntity.badRequest().body(response);
         }
-<<<<<<< HEAD
         // 3. 檢查是否被鎖定
         if (verificationService.isLocked(email)) {
             long lockTime = verificationService.getLockRemainingTime(email);
@@ -524,22 +523,11 @@ public class MemberController {
             return ResponseEntity.badRequest().body(response);
         }
         // 5. 驗證驗證碼
-=======
-        // 3. 檢查嘗試次數 (使用 Redis)
-        if (!verificationService.canAttempt(email)) {
-            response.put("success", false);
-            response.put("message", "驗證碼錯誤次數過多,請重新發送驗證碼");
-            response.put("remainingAttempts", 0);
-            return ResponseEntity.badRequest().body(response);
-        }
-        // 4. 驗證驗證碼
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
         String validatedEmail = jwt.validateEmailVerificationToken(token, code);
         if (validatedEmail == null) {
             // 驗證失敗,增加嘗試次數
             int attempts = verificationService.incrementAttempts(email);
             int remaining = verificationService.getRemainingAttempts(email);
-<<<<<<< HEAD
             
             // 檢查是否達到最大嘗試次數並被鎖定
             if (verificationService.isLocked(email)) {
@@ -560,16 +548,6 @@ public class MemberController {
         // 6. 驗證成功,清除嘗試次數和鎖定
         verificationService.clearAttempts(email);
         // 7. 生成註冊 Token
-=======
-            response.put("success", false);
-            response.put("message", "驗證碼錯誤,還剩 " + remaining + " 次機會");
-            response.put("remainingAttempts", remaining);
-            return ResponseEntity.badRequest().body(response);
-        }
-        // 5. 驗證成功,清除嘗試次數
-        verificationService.clearAttempts(email);
-        // 6. 生成註冊 Token
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
         String registrationToken = jwt.generateRegistrationToken(validatedEmail);
         response.put("success", true);
         response.put("message", "信箱驗證成功");

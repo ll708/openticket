@@ -4,11 +4,7 @@ import { useAuth } from "./useAuth";
 export function useEventDetail(eventId) {
   const { isLoggedIn } = useAuth();
   const [isFavorited, setIsFavorited] = useState(false);
-<<<<<<< HEAD
-  const [events, setEvents] = useState([]);
-=======
   const [event, setEvent] = useState(null); // 改為單一 event state
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
   const [loading, setLoading] = useState(true);
   const [memberId, setMemberId] = useState(null);
 
@@ -26,15 +22,6 @@ export function useEventDetail(eventId) {
 
   // 獲取活動資料
   useEffect(() => {
-<<<<<<< HEAD
-    window.scrollTo(0, 0);
-    fetch("/api/events")
-      .then(res => res.ok ? res.json() : Promise.reject())
-      .then(data => setEvents(Array.isArray(data) ? data : []))
-      .catch(() => setEvents([]))
-      .finally(() => setLoading(false));
-  }, []);
-=======
     if (!eventId) return;
     
     window.scrollTo(0, 0);
@@ -57,7 +44,6 @@ export function useEventDetail(eventId) {
       })
       .finally(() => setLoading(false));
   }, [eventId]);
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
   // 檢查收藏狀態
   useEffect(() => {
@@ -82,11 +68,7 @@ export function useEventDetail(eventId) {
     }
   }, [eventId]);
 
-<<<<<<< HEAD
-  const event = events.find(e => String(e.id) === String(eventId));
-=======
   // const event = events.find(e => String(e.id) === String(eventId)); // 不再需要從陣列尋找
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
   return {
     event,

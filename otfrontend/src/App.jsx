@@ -10,21 +10,15 @@ import Register from './pages/Register';
 import MemberPage from './pages/MemberPage';
 import SelectTicket from './pages/SelectTicket';
 import { ToastProvider } from './components/ToastContext';
-<<<<<<< HEAD
-=======
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CheckoutPage from './pages/CheckoutPage'; 
 import SuccessPage from './pages/SuccessPage'; 
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
 
 
 function App() {
  return (
-<<<<<<< HEAD
-=======
   <>
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
   <BrowserRouter> 
     <ToastProvider>
     <Routes>
@@ -38,12 +32,6 @@ function App() {
     <Route path="/register" element={<Register />} />
     <Route path="/Member/*" element={<MemberPage />} />
     <Route path="/Ticket" element={<SelectTicket />} />
-<<<<<<< HEAD
-    
-    </Routes>
-    </ToastProvider>
-  </BrowserRouter>
-=======
     <Route path="/checkout/:reservationId" element={<CheckoutPage />} />
     <Route path="/success" element={<SuccessPage />} />
     </Routes>
@@ -63,7 +51,6 @@ function App() {
       />
     </>
   
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
  );
 }
 

@@ -19,10 +19,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.9.5",
-<<<<<<< HEAD
-=======
     "react-toastify": "^11.0.5",
->>>>>>> e337bcd7368029f884354a4a952ff4ea21008e7b
     "uuid": "^13.0.0"
   },
   "devDependencies": {
