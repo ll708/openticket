@@ -2,7 +2,6 @@ package backend.otp.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,13 +44,18 @@ public class ReservationsService {
         }
 
         TicketDiscountConfig config = ticketType.getTicketDiscountConfig();
-        LocalDate eventStart = ticketType.getEvent().getEvent_start();
-        LocalDate now = LocalDate.now();
+        LocalDateTime saleStart = ticketType.getEvent().getSale_start(); // 假設 Event 中有此方法
+        if (saleStart == null) {
+            // 如果找不到開賣時間，則不執行早鳥邏輯
+            return basePrice.setScale(2, RoundingMode.HALF_UP);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
 
         int durationDays = config.getDuration_days();
-        LocalDate earlyBirdStart = eventStart.minusDays(durationDays);
+        LocalDateTime earlyBirdEnd = saleStart.plusDays(durationDays);
 
-        boolean inEarlyBird = !now.isBefore(earlyBirdStart) && now.isBefore(eventStart);
+        boolean inEarlyBird = !now.isBefore(saleStart) && now.isBefore(earlyBirdEnd);
 
         if (!inEarlyBird) {
             return basePrice.setScale(2, RoundingMode.HALF_UP);
@@ -80,7 +84,7 @@ public class ReservationsService {
 
         // 設定時間和狀態
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expiresAt = now.plusMinutes(2);// 設定兩分鐘過期
+        LocalDateTime expiresAt = now.plusMinutes(20);// 設定兩分鐘過期
 
         // 整合Reservations的Entity並設定屬性
 

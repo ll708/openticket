@@ -24,40 +24,7 @@ export default function SelectTicket() {
   //使用ref保存計時器
   const [rollbackTimer, setRollbackTimer] = useState(null);
 
-  const totalAmount = tickets.reduce(
-    (acc, t) => acc + (t.selectedQty || 0) * Number(t.finalPrice ?? t.customprice ?? 0),
-    0
-  );
-  const totalTickets = tickets.reduce((acc, t) => acc + (t.selectedQty || 0), 0);
-
-  //恢復原狀
-
-  const selectedTicketText = tickets
-    .filter((t) => t.selectedQty > 0)
-    .map((t) => `${t.ticketType} ${t.selectedQty}張`)
-    .join("/");
-
-//   const selectedTicketsArray = tickets
-//     .filter((t) => t.selectedQty > 0)
-//     .map((t) => `${t.ticketType} ${t.selectedQty}張`)
-
-//     const MAX_TICKETS_PER_LINE = 2;
-
-//     let selectedTicketText = "";
-//     for (let i = 0; i < selectedTicketsArray.length; i++) {
-//     selectedTicketText += selectedTicketsArray[i];
-
-//     if (i < selectedTicketsArray.length - 1) {
-//       // 如果不是最後一個項目
-//       if ((i + 1) % MAX_TICKETS_PER_LINE === 0) {
-//         // 每隔 N 個項目後換行
-//         selectedTicketText += " / \n"; // 插入斜線和換行符
-//       } else {
-//         // 其他項目間使用斜線分隔
-//         selectedTicketText += " / ";
-//       }
-//     }
-//   }
+ 
   //載入活動資料
   useEffect(() => {
     if (!eventId) return;
@@ -189,6 +156,35 @@ export default function SelectTicket() {
     
   }
 
+   const totalAmount = tickets.reduce(
+    (acc, t) => acc + (t.selectedQty || 0) * Number(t.finalPrice ?? t.customprice ?? 0),
+    0
+  );
+  const totalTickets = tickets.reduce((acc, t) => acc + (t.selectedQty || 0), 0);
+
+  const selectedTicketsArray = tickets
+    .filter((t) => t.selectedQty > 0)
+    .map((t) => `${t.ticketType} ${t.selectedQty}張`)
+
+    const MAX_TICKETS_PER_LINE = 3;//每行顯示的最大票種數量
+
+    let selectedTicketText = "";
+    for (let i = 0; i < selectedTicketsArray.length; i++) {
+    selectedTicketText += selectedTicketsArray[i];
+
+    if (i < selectedTicketsArray.length - 1) {
+      // 如果不是最後一個項目
+      if ((i + 1) % MAX_TICKETS_PER_LINE === 0) {
+        // 每隔 N 個項目後換行
+        selectedTicketText += " / \n"; // 插入斜線和換行符
+      } else {
+        // 其他項目間使用斜線分隔
+        selectedTicketText += " / ";
+      }
+    }
+  }
+
+
   //處理庫存回滾rollback
   // const rollbackStock = async (itemsToRollback) => {
   //   setMessage("已超過2分鐘，訂單未付款，票將退回庫存");
@@ -245,7 +241,7 @@ export default function SelectTicket() {
 
     try {
       console.log("開始結帳流程...");
-      setMessage("請於 2 分鐘內完成付款。");//原本有鎖票前面會加這段文字"已暫時保留票券，"
+      setMessage("請於 20 分鐘內完成付款。");//原本有鎖票前面會加這段文字"已暫時保留票券，"
 
       //3.針對每一個選定的票種，使用後端API鎖庫存
       // const decreasePromises = checkoutItems.map(async (item) => {
