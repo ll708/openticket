@@ -8,6 +8,7 @@ import '../Css/SelectTicket.css';
 // **** 設定Spring Boot基礎URL ****
 const BASE_API_URL = 'http://localhost:8080';
 //圖片先寫死
+
 const DEFAULT_IMAGE_URL = "/images/test.jpg";
 
 export default function SelectTicket() {
@@ -505,12 +506,17 @@ export default function SelectTicket() {
             <span className="ticket-type-label">票種:</span>
             <span id="tickettype">{selectedTicketText}</span>
           </div>
-          <div><strong>總張數:</strong> <span id="totaltickets">{`總共 ${totalTickets}張`}</span></div>
+          <div><strong>總張數:</strong> <span id="totaltickets">{totalTickets > 0 ? `總共 ${totalTickets}張` : ''}</span></div>
           <hr />
           <div>
             <strong>總金額: <span id="total">NT${totalAmount}</span></strong>
           </div>
-          <div style={{ marginTop: 10 }}>
+          <div style={{ marginTop: 10 }} className="checkout-buttons">
+            <button
+              className="btn btn-secondary cancel-btn"
+              onClick={() => navigate(`/events`)} //點擊取消是導回活動列表頁
+              disabled={isCheckingOut}
+            >取消購票</button>
             <button
               className="btn"
               id="checkoutBtn"
