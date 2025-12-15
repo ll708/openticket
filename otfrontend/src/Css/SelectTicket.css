@@ -81,10 +81,6 @@ h1 {
 }
 
 
-
-
-
-
 /* ====== 購票區外框 (ticketzone) ====== */
 .ticketzone {
     width: 100%; 
@@ -130,12 +126,7 @@ h1 {
 .tickets th:last-child, .tickets td:last-child {
     border-right: none;
 }
-/* .tickets tr:first-child th {
-    border-top: none;
-}
-.tickets tr:last-child td {
-    border-bottom: none; 
-} */
+
 /* 補齊表格左右邊框，使其視覺上與 ticketzone 的圓角邊緣對齊 */
 .tickets {
     border-left: 1px solid #ddd;
@@ -149,7 +140,7 @@ h1 {
     font-weight: 600;
 }
 
-/* *** 下拉選單樣式 (已修改為白色背景，並確保文字為黑色) *** */
+/* *** 下拉選單樣式 */
 .tickets select {
     width: 130px;
     padding: 6px;
@@ -165,30 +156,26 @@ h1 {
 
 /* 針對「票種」的 div，設定為區塊顯示，允許內容換行 */
 .ticket-type-summary {
-    display: flex; /* 讓內容可以自由換行 */
+    display: flex;
     align-items: flex-start;
-    padding-bottom: 5px; /* 底部增加間距 */
+    padding-bottom: 5px;
     line-height: 1.5;
     font-weight: bold; /* 讓標籤更突出 */
 }
 
 .ticket-type-label {
-    flex-shrink: 0; /* 不壓縮 */
+    flex-shrink: 0;
     padding-right: 5px; /* 增加標籤和內容之間的間隔 */
     font-weight: bold;
 }
 
-/* 針對「總共張數」的 div，維持 Flex 佈局 */
+/* 針對總共張數的div */
 .totalfee-fixed > div:not(.ticket-type-summary):not(:last-child) { 
-    /* text-align: left; */
     display: flex; 
-    /* justify-content: space-between; 
-    line-height: 1.8; */
-    /* flex-wrap: nowrap; 確保總張數不換行  */
 } 
 
 #tickettype {
-    white-space: pre-wrap; /* 讓內容自動換行 (預設值，但明確寫出確保覆蓋) */
+    white-space: pre-wrap; /* 讓內容自動換行 */
     display: block; /* 確保它能與前面的「票種:」在同一行開始 */
     font-weight: normal; /* 讓清單文字與標籤區分 */
     color: #444;
@@ -201,7 +188,7 @@ h1 {
     
     /* 設置固定寬度 */
     width: 100%;
-    max-width: 400px; /* 限制最大寬度 */
+    max-width: 400px;
     
     /* 外觀樣式 */
     position: static; 
@@ -245,8 +232,38 @@ h1 {
 }
 .btn:hover { background: #3b7acc; }
 
+/* 讓兩個按鈕並排且保持間距 */
+.checkout-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
 
-早鳥票優惠
+/* 確保主要的.btn顏色不變 */
+.btn {
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* 取消按鈕的樣式 */
+.btn-secondary.cancel-btn {
+    background-color: #f0f0f0; /* 淺灰色背景 */
+    color: #333; /* 深色文字 */
+    border: 1px solid #ccc;
+    padding: 10px 15px; 
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    flex-grow: 1;
+}
+
+.btn-secondary.cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+
+
+
+/*早鳥票優惠*/
 .tickets tr.early-bird-row {
     background-color: #FFF5E6; /* 極淺的暖橘色背景 */
     transition: background-color 0.3s ease;
@@ -286,14 +303,12 @@ h1 {
 
 /* 提示文字本身的樣式 */
 .early-bird-message {
-    /* 讓它看起來像一個橫幅，寬度撐滿 */
     background-color: #FF7700; /* 醒目的橘色背景 */
     color: white; /* 白色文字 */
     font-weight: 600;
     font-size: 0.9em;
     padding: 5px 15px;
     text-align: center;
-    /* 圓角與外容器對齊 */
     border-radius: 0; 
     /* 移除表格線，只保留背景色 */
     border: none !important;
