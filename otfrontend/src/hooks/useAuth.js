@@ -7,6 +7,11 @@ import { useToast } from '../components/ToastContext';
 const BASE_URL = 'http://localhost:8080';
 // -----------------
 
+// --- getProfile 快取變數 ---
+let profileCache = null;
+let profileCacheTime = 0;
+const PROFILE_CACHE_TTL = 3000; // 快取 3 秒，可依需求調整
+
 // *** 實際後端 API 呼叫的函式 (使用 fetch) ***
 const actualApi = {
     /**
@@ -17,7 +22,7 @@ const actualApi = {
      */
     login: async (account, password) => {
         // 後端端點：http://localhost:8080/member/login
-        const url = `${BASE_URL}/member/login`; 
+        const url = `${BASE_URL}/member/login`;
 
         try {
             const res = await fetch(url, {
@@ -32,23 +37,23 @@ const actualApi = {
                     password: password
                 }),
                 // 必須包含 credentials: "include" 才能發送和接收跨域 Cookie
-                credentials: "include" 
+                credentials: "include"
             });
 
             // 登入成功時，後端會將 JWT 設置到 cookie 中，並返回 JSON 成功訊息
             const data = await res.json();
-            
+
             // 檢查 HTTP 狀態碼 (200-299 視為成功)
             if (res.ok) {
                 // *** 根據常見 Spring Security 登入成功邏輯：
                 // 1. JWT 已自動在 Header (Set-Cookie) 中設置完成
                 // 2. 登入成功響應中通常會返回用戶名
-                
-                // 假設成功響應中的用戶名鍵名為 'name'
-                const userName = data.name || data.user?.name || '會員'; 
 
-                return { 
-                    success: true, 
+                // 假設成功響應中的用戶名鍵名為 'name'
+                const userName = data.name || data.user?.name || '會員';
+
+                return {
+                    success: true,
                     name: userName,
                     message: data.message || '登入成功'
                 };
@@ -63,59 +68,53 @@ const actualApi = {
             return { success: false, message: '網路或伺服器連線錯誤' };
         }
     },
-    
+
     /**
   * 獲取會員名稱 (用於驗證 Token 有效性，需依賴 Cookie 自動發送)
   * @returns {Promise<{success: boolean, name?: string, message?: string}>} 
   */
     getProfile: async () => {
         // 注意：您 MemberInfo.jsx 中使用的是 /member/profile
-        const url = `${BASE_URL}/member/profile`; 
-            
+        const url = `${BASE_URL}/member/profile`;
+        // --- 快取邏輯 ---
+        const now = Date.now();
+        if (profileCache && (now - profileCacheTime < PROFILE_CACHE_TTL)) {
+            return profileCache;
+        }
         try {
-        const res = await fetch(url, {
-            method: 'GET',
-            credentials: "include" 
-        });
-
-                // ** 核心邏輯修改：處理 401/403 **
-                if (!res.ok) {
-                    // 如果不是 2xx，直接返回失敗，讓 useAuth 的 useEffect 處理狀態
-                    const status = res.status;
-                    let message = `驗證失敗，狀態碼: ${status}`;
-                    try {
-                        // 嘗試讀取後端錯誤訊息 (如果後端有返回 JSON)
-                        const errorData = await res.json(); 
-                        message = errorData.message || message;
-                    } catch (e) {
-                        // 如果後端返回非 JSON 格式 (例如 401 默認響應)
-                        console.warn(`Profile API returned ${status} without readable JSON.`);
-                    }
-                    
-                    return { 
-                        success: false, 
-                        message: message 
-                    };
-                }
-
-                // ** 處理成功 (res.ok) **
-                const data = await res.json();
-                // 這裡直接使用 data.name，因為 MemberInfo 顯示的後端數據結構就是這樣。
-                const userName = data.name || '會員'; 
-                // 從 API 回應中獲取 role，並確保它是數字 (如果後端是字串則需要 parseInt)
-                const userRole = data.role !== undefined ? parseInt(data.role, 10) : null;
-
-                return { 
-                    success: true, 
-                    name: userName,
-                    role: userRole, // <-- 【新增】返回用戶角色
-                    message: 'Token 驗證成功' 
-                };
-                
-
+            const res = await fetch(url, {
+                method: 'GET',
+                credentials: "include"
+            });
+            if (!res.ok) {
+                let message = `驗證失敗，狀態碼: ${res.status}`;
+                try {
+                    const errorData = await res.json();
+                    message = errorData.message || message;
+                } catch (e) {}
+                const failResult = { success: false, message };
+                profileCache = failResult;
+                profileCacheTime = now;
+                return failResult;
+            }
+            const data = await res.json();
+            const userName = data.name || '會員';
+            const userRole = data.role !== undefined ? parseInt(data.role, 10) : null;
+            const okResult = {
+                success: true,
+                name: userName,
+                role: userRole,
+                message: 'Token 驗證成功'
+            };
+            profileCache = okResult;
+            profileCacheTime = now;
+            return okResult;
         } catch (error) {
-        console.error('Profile API 網路錯誤:', error);
-        return { success: false, message: '網路連線或伺服器錯誤' };
+            console.error('Profile API 網路錯誤:', error);
+            const failResult = { success: false, message: '網路連線或伺服器錯誤' };
+            profileCache = failResult;
+            profileCacheTime = now;
+            return failResult;
         }
     },
 
@@ -125,8 +124,8 @@ const actualApi = {
     logout: async () => {
         // 假設登出端點為 /member/logout (一個會清除 Cookie 的端點)
         // ★ 如果您有實際的 Logout API，請替換此處
-        const url = `${BASE_URL}/member/logout`; 
-        
+        const url = `${BASE_URL}/member/logout`;
+
         try {
             // 發送請求，讓後端清除 JWT Cookie
             await fetch(url, {
@@ -150,18 +149,18 @@ export const useAuth = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userName, setUserName] = useState("");
     const [userRole, setUserRole] = useState(null);
-    
+
     const navigate = useNavigate();
     // 由於 JWT 是存在 HttpOnly Cookie 中 (前端無法讀取)，
     // 我們無法直接依賴 authToken 狀態。
     // 我們改為依賴 isLoggedIn 狀態，並在載入時調用 getProfile 來驗證 Cookie。
     const [isLoading, setIsLoading] = useState(true);
     const { showToast } = useToast();
-   
+
     // 輔助函式：用來從 /member/profile 獲取並設置狀態 (登入成功後調用)
     const setAuthStatusFromProfile = useCallback(async () => {
         const result = await actualApi.getProfile();
-        
+
         if (result.success) {
             setUserName(result.name);
             setUserRole(result.role); // <-- 【新增】設置用戶角色
@@ -178,7 +177,7 @@ export const useAuth = () => {
     // 1. 登入函式：呼叫 API 並讓後端設置 Cookie
     const login = useCallback(async (account, password) => {
         const result = await actualApi.login(account, password);
-        
+
         if (result.success) {
             // 登入成功後，立即調用 setAuthStatusFromProfile 獲取 role 並更新狀態
             await setAuthStatusFromProfile();
@@ -199,9 +198,9 @@ export const useAuth = () => {
         setUserRole(null);
 
         let success = false;
-        
+
         // 預設登出後導航到的頁面 (如果您希望登出後回 /login，這裡直接寫 /login)
-        let targetPath = "/"; 
+        let targetPath = "/";
 
         try {
             // 【第 2 步】：確保使用正確的絕對路徑
@@ -214,7 +213,7 @@ export const useAuth = () => {
             if (res.ok) {
                 success = true;
                 // 登出成功，導航到首頁，然後讓路由守衛重定向（如果有的話）
-                targetPath = "/"; 
+                targetPath = "/";
                 showToast("登出成功！");
             } else if (res.status === 403 || res.status === 401) {
                 // Token 過期或權限不足，雖然登出成功，但導航到登入頁
@@ -244,7 +243,7 @@ export const useAuth = () => {
         const checkLoginStatus = async () => {
             // 嘗試呼叫一個受保護的 API (例如 /member/info)
             // 瀏覽器會自動帶上 JWT Cookie
-            
+
             setIsLoading(true);
             await setAuthStatusFromProfile();
             // const result = await actualApi.getProfile();
@@ -261,11 +260,11 @@ export const useAuth = () => {
             // }
             setIsLoading(false);
         };
-        
+
         // 只有在元件首次載入時運行一次
         checkLoginStatus();
 
-    }, []); 
+    }, []);
 
 
     return { isLoggedIn, userName, userRole, login, logout, isLoading };

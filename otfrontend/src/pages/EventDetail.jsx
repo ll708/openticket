@@ -1,12 +1,16 @@
+// src/pages/EventDetail.jsx
+
 import React, { useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Button } from "@/components/ui/button";
 import Breadcrumb from "../components/Breadcrumb";
 import EventHero from "../components/EventHero";
 import EventShareActions from "../components/EventShareActions";
 import EventDetailTabs from "../components/EventDetailTabs";
+import { Button } from "@/components/ui/button";
+
 import { useEventDetail } from "../hooks/useEventDetail";
 import { useToast } from "../components/ToastContext";
 

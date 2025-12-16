@@ -1,12 +1,13 @@
 // src/pages/Events.jsx
 
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Breadcrumb from "../components/Breadcrumb";
 import EventTabs from "../components/EventTabs";
 import EventGrid from "../components/EventGrid";
-import { useNavigate, useLocation } from "react-router-dom";
-import Breadcrumb from "../components/Breadcrumb";
 
 export default function Events() {
     // 分頁狀態與活動資料
@@ -22,7 +23,7 @@ export default function Events() {
     const keyword = searchParams.get("keyword")?.trim() || "";
 
     // 取得活動資料並格式化日期
-    useEffect(() => {
+    const fetchEvents = () => {
         setLoading(true);
         setError(null);
         fetch("/api/events")
@@ -48,6 +49,10 @@ export default function Events() {
             .finally(() => {
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchEvents();
     }, []);
 
     // 依分頁與關鍵字過濾活動
@@ -94,6 +99,12 @@ export default function Events() {
                     <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-6 text-center" role="alert">
                         <strong className="font-bold">錯誤！</strong>
                         <span className="block sm:inline"> {error}</span>
+                        <button
+                            onClick={fetchEvents}
+                            className="ml-4 underline hover:text-red-900 font-semibold"
+                        >
+                            重試
+                        </button>
                     </div>
                 )}
 

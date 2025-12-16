@@ -4,7 +4,7 @@ import EventNote from "./EventNote";
 
 export default function EventDetailTabs({ eventId }) {
   const [tab, setTab] = React.useState('intro');
-  
+
   return (
     <div className="bg-white mt-0 px-4 md:px-12 py-8">
       <div className="sticky top-0 bg-white z-10 flex border-b border-gray-300 mb-6 overflow-x-auto">
