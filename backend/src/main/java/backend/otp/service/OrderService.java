@@ -156,6 +156,10 @@ public class OrderService {
                 return false;
             }
 
+            if (checkoutOrdersRepository.existsByOrderId(orders.getId())) {
+                return false;
+            }
+
             List<ReservationItem> items
                     = reservationItemRepository.findByReservationsId(reservationId);
             items.sort(Comparator.comparing(ReservationItem::getEventTicketTypeId));

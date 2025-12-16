@@ -1,39 +1,28 @@
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const SuccessPage = () => {
   const [reservationId, setReservationId] = useState("");
 
-  useEffect(() => {
-    const storedReservationId = localStorage.getItem("reservationId");
-    if (storedReservationId) {
-      console.log(storedReservationId);
-      setReservationId(storedReservationId);
-      console.log(reservationId);
-    }
-    const change = async(e) => {
+  const calledRef = useRef(false);
 
-      try {
-        const response = await fetch("http://localhost:8080/api/reservations/change", {
-          method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    reservationId: Number(storedReservationId)
-                }),
-                credentials: "include"
-        });
-        const data = await response.json();
-        console.log(data);
-        localStorage.removeItem("reservationId");
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    
+  useEffect(() => {
+    if (calledRef.current) return;
+    calledRef.current = true;
+
+    const change = async () => {
+      await fetch("http://localhost:8080/api/reservations/change", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reservationId: Number(localStorage.getItem("reservationId"))
+        }),
+        credentials: "include"
+      });
+    };
+
     change();
   }, []);
 
