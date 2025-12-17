@@ -177,7 +177,7 @@ public class EventTicketTypeService {
 
 
         BigDecimal finalPrice = basePrice.multiply(discountRate);
-        return finalPrice.setScale(2, RoundingMode.HALF_UP);
+        return finalPrice.setScale(0, RoundingMode.HALF_UP);
     }
 
     // 早鳥票DTO

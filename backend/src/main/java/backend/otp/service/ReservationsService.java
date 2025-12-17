@@ -40,14 +40,14 @@ public class ReservationsService {
     private BigDecimal calculateDiscountedPrice(EventTicketType ticketType) {
         BigDecimal basePrice = ticketType.getCustomprice();
         if (ticketType.getTicketDiscountConfig() == null) {
-            return basePrice.setScale(2, RoundingMode.HALF_UP);
+            return basePrice.setScale(0, RoundingMode.HALF_UP);
         }
 
         TicketDiscountConfig config = ticketType.getTicketDiscountConfig();
         LocalDateTime saleStart = ticketType.getEvent().getSale_start(); // 假設 Event 中有此方法
         if (saleStart == null) {
             // 如果找不到開賣時間，則不執行早鳥邏輯
-            return basePrice.setScale(2, RoundingMode.HALF_UP);
+            return basePrice.setScale(0, RoundingMode.HALF_UP);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -58,13 +58,13 @@ public class ReservationsService {
         boolean inEarlyBird = !now.isBefore(saleStart) && now.isBefore(earlyBirdEnd);
 
         if (!inEarlyBird) {
-            return basePrice.setScale(2, RoundingMode.HALF_UP);
+            return basePrice.setScale(0, RoundingMode.HALF_UP);
         }
 
         // 直接使用折扣率乘原價
         BigDecimal discountRate = config.getDiscount_rate();
         BigDecimal finalPrice = basePrice.multiply(discountRate);
-        return finalPrice.setScale(2, RoundingMode.HALF_UP);
+        return finalPrice.setScale(0, RoundingMode.HALF_UP);
     }
 
     // 建立Reservations
