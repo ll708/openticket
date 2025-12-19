@@ -19,6 +19,9 @@ public class EventJpa {
     private LocalDate event_end;
     private LocalDateTime sale_start;//LocalDateTime 也不帶時區 → 適合表示單純的“當地時間”。
     
+    @Column(name = "status_id")
+    private Integer statusId;
+    
 
     public Long getId() {
         return id;
@@ -66,6 +69,14 @@ public class EventJpa {
 
     public void setSale_start(LocalDateTime sale_start) {
         this.sale_start = sale_start;
+    }
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
     }
 
 }

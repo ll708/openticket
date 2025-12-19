@@ -39,7 +39,39 @@ export default function EventDetail() {
   }, [isLoggedIn, location.search, event, navigate]);
 
   if (loading) {
-    return <div className="text-center py-12">載入中...</div>;
+    return (
+      <div className="font-sans min-h-screen flex flex-col">
+        <Header showSearchBar={true} />
+        <div className="max-w-7xl mx-auto w-full px-0 py-0">
+          <div className="h-6 w-48 skeleton my-4 mx-4 rounded" />
+        </div>
+        {/* 骨架屏 Hero */}
+        <div className="w-full bg-gray-200 relative overflow-hidden" style={{ minHeight: '320px' }}>
+          <div className="relative flex flex-col items-center justify-center z-20 w-full">
+            <div className="relative w-full aspect-[85/37] max-w-4xl mx-auto mt-4 rounded shadow-lg skeleton" />
+            <div className="h-8 w-64 skeleton mt-4 mb-2 rounded" />
+          </div>
+        </div>
+        <main className="flex-1 bg-bg px-0 py-0 max-w-7xl mx-auto w-full">
+          <div className="flex justify-center gap-4 mt-4 px-4">
+            <div className="h-12 w-40 skeleton rounded-md" />
+          </div>
+          <div className="flex justify-center gap-6 mt-6">
+            <div className="h-6 w-20 skeleton rounded" />
+            <div className="h-6 w-20 skeleton rounded" />
+          </div>
+          <div className="mt-8 px-4">
+            <div className="h-10 w-full skeleton rounded mb-4" />
+            <div className="space-y-2">
+              <div className="h-4 w-full skeleton rounded" />
+              <div className="h-4 w-full skeleton rounded" />
+              <div className="h-4 w-3/4 skeleton rounded" />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   // 處理錯誤顯示
@@ -48,14 +80,21 @@ export default function EventDetail() {
       <div className="font-sans min-h-screen flex flex-col">
         <Header showSearchBar={true} />
         <main className="flex-1 flex flex-col items-center justify-center bg-bg px-6 py-12">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg shadow-sm max-w-md text-center">
-            <h2 className="text-xl font-bold mb-2">無法載入活動</h2>
-            <p>{error}</p>
+          <div className="bg-white border border-gray-200 px-10 py-12 rounded-xl shadow-lg max-w-lg text-center">
+            <div className="text-orange-500 mb-4">
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 15c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">活動資訊提示</h2>
+            <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+              {error}
+            </p>
             <Button 
-              className="mt-4 bg-gray-600 hover:bg-gray-700 text-white"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-6 text-lg font-semibold rounded-lg transition-colors"
               onClick={() => navigate("/events")}
             >
-              返回活動列表
+              查看其他熱門活動
             </Button>
           </div>
         </main>
@@ -116,10 +155,19 @@ export default function EventDetail() {
         {/* 立即購票按鈕 */}
         <div className="flex justify-center gap-4 mt-4 px-4">
           <Button
-            className="bg-blue-600 text-white px-8 py-3 text-lg"
-            onClick={handlePurchase}
+            className={`${
+              event.statusId === 4 
+                ? "bg-blue-600 hover:bg-blue-700" 
+                : "bg-gray-400 cursor-not-allowed"
+            } text-white px-8 py-3 text-lg`}
+            onClick={event.statusId === 4 ? handlePurchase : null}
+            disabled={event.statusId !== 4}
           >
-            立即購票
+            {event.statusId === 4 
+              ? "立即購票" 
+              : event.statusId === 1 
+                ? "尚未開放" 
+                : "暫停售票"}
           </Button>
         </div>
         {/* 收藏與分享按鈕 */}

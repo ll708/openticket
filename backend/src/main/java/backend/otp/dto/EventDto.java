@@ -6,16 +6,18 @@ public class EventDto {
 	private String address;
 	private String eventStart;
 	private String title;
+	private Integer statusId;
 	
 
 	public EventDto() {}
 
-	public EventDto(Long id, String image, String address, String eventStart, String title) {
+	public EventDto(Long id, String image, String address, String eventStart, String title, Integer statusId) {
 		this.id = id;
 		this.image = image;
 		this.address = address;
 		this.eventStart = eventStart;
 		this.title = title;
+		this.statusId = statusId;
 	}
 
 	public Long getId() {
@@ -56,5 +58,13 @@ public class EventDto {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public Integer getStatusId() {
+		return statusId;
+	}
+
+	public void setStatusId(Integer statusId) {
+		this.statusId = statusId;
 	}
 }

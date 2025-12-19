@@ -64,7 +64,24 @@ function AnnouncementList({ limit = null, isFullPage = false, onSelectAnnounceme
     }, [limit]); 
 
     // --- 渲染載入和錯誤狀態 ---
-    if (loading) return <div className="text-center py-8">載入中...</div>;
+    if (loading) {
+        return (
+            <div className="space-y-4">
+                <div className="h-10 w-40 skeleton rounded mb-4" />
+                <div className="divide-y divide-gray-200">
+                    {[...Array(limit || 5)].map((_, i) => (
+                        <div key={i} className="py-4 flex items-start space-x-4">
+                            <div className="h-5 w-20 skeleton rounded flex-shrink-0" />
+                            <div className="flex-grow space-y-2">
+                                <div className="h-4 w-20 skeleton rounded" />
+                                <div className="h-6 w-full skeleton rounded" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
     if (error) return <div className="text-center py-8 text-red-500">錯誤: {error}</div>;
 
     // --- 列表主體渲染 ---

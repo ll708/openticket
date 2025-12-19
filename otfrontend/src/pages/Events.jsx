@@ -91,8 +91,17 @@ export default function Events() {
 
                 {/* 錯誤提示與載入狀態 */}
                 {loading && (
-                    <div className="flex justify-center items-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="bg-white shadow-lg rounded-xl overflow-hidden">
+                                <div className="w-full aspect-[85/37] skeleton" />
+                                <div className="p-4">
+                                    <div className="skeleton skeleton-text w-1/3 mb-2" />
+                                    <div className="skeleton skeleton-text w-full mb-2" />
+                                    <div className="skeleton skeleton-text w-2/3" />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 )}
 

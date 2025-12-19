@@ -91,6 +91,7 @@ const CustomArrowIcon = ({ direction, onClick }) => {
 function EventSection() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]); 
+  const [loading, setLoading] = useState(true);
   // 追蹤當前頁面索引，從 0 開始
   const [currentPage, setCurrentPage] = useState(0);
   // 追蹤滑動方向
@@ -98,6 +99,7 @@ function EventSection() {
 
   // 取得活動資料 (邏輯不變)
   useEffect(() => {
+    setLoading(true);
     fetch("/api/events")
       .then(res => res.json())
       .then(data => {
@@ -110,7 +112,8 @@ function EventSection() {
         // 只保留最多 MAX_EVENTS_DISPLAY 個活動
         setEvents(fixed.slice(0, MAX_EVENTS_DISPLAY));
       })
-      .catch((error) => console.error("取得活動資料失敗", error));
+      .catch((error) => console.error("取得活動資料失敗", error))
+      .finally(() => setLoading(false));
   }, []);
 
   // 計算總頁數
@@ -168,7 +171,20 @@ function EventSection() {
         )}
         
         {/* 2. 活動卡片顯示區域 */}
-        {noEvents ? (
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 py-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+                <div className="w-full aspect-[85/37] skeleton" />
+                <div className="p-4 space-y-3">
+                  <div className="h-4 w-1/3 skeleton rounded" />
+                  <div className="h-6 w-full skeleton rounded" />
+                  <div className="h-6 w-2/3 skeleton rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : noEvents ? (
           <p className="text-gray-400 mt-8">目前沒有熱門活動資訊。</p>
         ) : (
           <div className="overflow-visible py-4">

@@ -12,8 +12,45 @@ function Login() {
     const [password, setPassword] = useState("")
     const [message, setMessage] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+    const [carouselItems, setCarouselItems] = useState([
+        { loading: true },
+        { loading: true },
+        { loading: true }
+    ])
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isDark, toggleDarkMode] = useDarkMode()
+
+    // 取得隨機活動作為輪播內容
+    useEffect(() => {
+        fetch("/api/events")
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    const randomEvents = data
+                        .sort(() => Math.random() - 0.5)
+                        .slice(0, 5)
+                        .map(event => ({
+                            image: (event.image || "/api/images/covers/test.jpg").replace(/ /g, '%20'),
+                            title: event.title,
+                            description: event.address || "精彩活動，不容錯過",
+                            loading: false
+                        }));
+                    setCarouselItems(randomEvents);
+                }
+            })
+            .catch(err => {
+                console.error("無法載入登入頁輪播圖片", err);
+                // 失敗時顯示預設內容
+                setCarouselItems([
+                    {
+                        image: "https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=600&fit=crop",
+                        title: "展示產品特色",
+                        description: "用引人注目的視覺效果吸引用戶，展示您的應用程式所提供的功能。",
+                        loading: false
+                    }
+                ]);
+            });
+    }, []);
 
     // 檢查是否因為 token 過期而被導向登入頁面
     useEffect(() => {
@@ -26,11 +63,12 @@ function Login() {
 
     // 輪播功能
     useEffect(() => {
+        if (carouselItems.length <= 1) return;
         const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % 3)
+            setCurrentSlide((prev) => (prev + 1) % carouselItems.length)
         }, 5000)
         return () => clearInterval(timer)
-    }, [])
+    }, [carouselItems.length])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -85,24 +123,6 @@ function Login() {
         }
     }
 
-    const carouselItems = [
-        {
-            image: "https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=600&fit=crop",
-            title: "展示產品特色",
-            description: "用引人注目的視覺效果吸引用戶，展示您的應用程式所提供的功能。"
-        },
-        {
-            image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
-            title: "突顯品牌價值",
-            description: "傳達您品牌的使命，與您的受眾建立連結。"
-        },
-        {
-            image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
-            title: "顯示歡迎訊息",
-            description: "為新用戶和回訪用戶創造溫暖且吸引人的第一印象。"
-        }
-    ]
-
     return (
         <>
             <button
@@ -127,12 +147,21 @@ function Login() {
                                     <div key={index} className="carousel-item">
                                         <div className="carousel-card">
                                             <div
-                                                className="carousel-image"
-                                                style={{ backgroundImage: `url(${item.image})` }}
+                                                className={`carousel-image ${item.loading ? 'skeleton loading' : ''}`}
+                                                style={item.loading ? {} : { backgroundImage: `url(${item.image})` }}
                                             />
                                             <div className="carousel-content">
-                                                <h3>{item.title}</h3>
-                                                <p>{item.description}</p>
+                                                {item.loading ? (
+                                                    <>
+                                                        <div className="skeleton skeleton-text skeleton-title" />
+                                                        <div className="skeleton skeleton-text skeleton-desc" />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <h3>{item.title}</h3>
+                                                        <p>{item.description}</p>
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

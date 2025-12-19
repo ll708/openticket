@@ -2,6 +2,7 @@ package backend.otp.controller;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,8 +37,13 @@ public class EventController {
 	@GetMapping
 	public ResponseEntity<List<EventDto>> getAllEvents() {
 		try {
-			// 1. 取得所有活動
-			List<EventJpa> events = eventRepositoryJPA.findAll();
+			// 1. 取得所有可顯示的活動 (SQL 層級過濾：1, 2, 4)
+			List<Integer> visibleStatuses = Arrays.asList(
+				EventStatus.NOT_OPEN.getId(), 
+				EventStatus.ONGOING.getId(), 
+				EventStatus.OPEN_FOR_TICKET.getId()
+			);
+			List<EventJpa> events = eventRepositoryJPA.findAllByStatusIdIn(visibleStatuses);
 			
 			// 2. 取得所有圖片資訊 (按建立時間倒序)
 			List<EventTitlePageEntity> images = eventTitlePageRepository.findAllByOrderByCreatedAtDesc();
@@ -75,7 +81,8 @@ public class EventController {
 						imageUrl,
 						eventJpa.getAddress(),
 						eventJpa.getEvent_start() != null ? eventJpa.getEvent_start().toString() : "",
-						eventJpa.getTitle());
+						eventJpa.getTitle(),
+						eventJpa.getStatusId());
 				})
 				.collect(Collectors.toList());
 			
@@ -93,6 +100,7 @@ public class EventController {
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long id) {
 		try {
 			return eventRepositoryJPA.findById(id)
+				.filter(eventJpa -> EventStatus.isVisible(eventJpa.getStatusId()))
 				.map(eventJpa -> {
 					String imageUrl = eventTitlePageRepository.findFirstByEventIdOrderByCreatedAtDesc(id)
 						.map(img -> {
@@ -117,7 +125,8 @@ public class EventController {
 						imageUrl,
 						eventJpa.getAddress(),
 						eventJpa.getEvent_start() != null ? eventJpa.getEvent_start().toString() : "",
-						eventJpa.getTitle());
+						eventJpa.getTitle(),
+						eventJpa.getStatusId());
 				})
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());

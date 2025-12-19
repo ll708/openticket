@@ -26,6 +26,7 @@ function Hero() {
     const navigate = useNavigate();
     const [images, setImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
     // [新增狀態] 追蹤使用者是否與輪播互動 (滑鼠移入或點擊)
     const [isInteracting, setIsInteracting] = useState(false);
 
@@ -60,6 +61,7 @@ function Hero() {
     useEffect(() => {
         const fetchImages = async () => {
             try {
+                setLoading(true);
                 const response = await fetch(REMOTE_API_ENDPOINT);
 
                 if (!response.ok) {
@@ -69,7 +71,7 @@ function Hero() {
                 const data = await response.json();
 
                 const sortedEvents = data
-                    .sort((a, b) => b.id - a.id)
+                    .sort(() => Math.random() - 0.5)
                     .slice(0, 7);
 
                     const mappedImages = sortedEvents.map(event => {
@@ -88,6 +90,8 @@ function Hero() {
                 console.error("無法載入輪播圖片，使用 fallback 圖片。", error);
                 const fallbackData = FALLBACK_IMAGES.map(url => ({ id: null, imageUrl: url, title: "Default Image" }));
                 setImages(fallbackData);
+            } finally {
+                setLoading(false);
             }
         };
         fetchImages();
@@ -195,6 +199,19 @@ function Hero() {
     // [新增] 處理滑鼠移入/移出事件的函數
     const handleMouseEnter = () => setIsInteracting(true);
     const handleMouseLeave = () => setIsInteracting(false);
+
+    if (loading) {
+        return (
+            <section className="relative w-full flex flex-col justify-center items-center overflow-hidden bg-black">
+                <div className="relative w-full overflow-hidden" style={{ paddingBottom: '43.53%' }}>
+                    <div className="absolute inset-0 w-full h-full skeleton" />
+                    <div className="absolute inset-0 z-20 flex flex-col justify-end pb-8 md:justify-center md:pb-0 items-center w-full pointer-events-none">
+                        <div className="bg-white/20 rounded-full w-[80%] md:w-[600px] h-12 md:h-16 skeleton" />
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section

@@ -100,12 +100,43 @@
     padding-bottom: 2rem;
 }
 
+/* 骨架屏動畫 */
+@keyframes skeleton-loading {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f2f5 25%, #e6e8eb 50%, #f0f2f5 75%);
+    background-size: 400% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
 .carousel-image {
     width: 100%;
-    aspect-ratio: 16/9;
+    aspect-ratio: 85/37;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+.carousel-image.loading {
+    background: #f0f2f5;
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.skeleton-title {
+    width: 60%;
+    height: 1.25rem;
+}
+
+.skeleton-desc {
+    width: 90%;
 }
 
 .carousel-content {

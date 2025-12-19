@@ -33,7 +33,7 @@ export function useEventDetail(eventId) {
     fetch(`/api/events/detail/${eventId}`)
       .then(res => {
         if (!res.ok) {
-            if (res.status === 404) throw new Error('找不到此活動');
+            if (res.status === 404) throw new Error('此活動已結束或暫時下架，請查看其他熱門活動');
             if (res.status === 500) throw new Error('伺服器發生錯誤，請稍後再試');
             throw new Error(`HTTP error! status: ${res.status}`);
         }
