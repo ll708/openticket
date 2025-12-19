@@ -20,6 +20,7 @@ export default function SelectTicket() {
 
   const [event, setEvent] = useState(null);
   const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -49,20 +50,18 @@ export default function SelectTicket() {
 
   useEffect(() => {
     if (!eventId) return;
-    fetch(`${BASE_API_URL}/api/events/${eventId}`)
+    setLoading(true);
+    fetch(`/api/events/detail/${eventId}`)
       .then((r) => {
         if (!r.ok) throw new Error("無法取得活動資料");
         return r.json();
       })
       .then((data) => {
-        // 支援後端回傳欄位 image 或 imageUrl
-        const rawImage = data.image ?? data.imageUrl ?? null;
-        // console.log("後端原始資料:", data);
+        // 統一欄位名稱以符合 SelectTicket 原本的邏輯
         const transformedEvent = {
           ...data,
-          image: rawImage,
-          event_start: data.event_start ?? data.eventStart,
-          event_end: data.event_end ?? data.eventEnd,
+          event_start: data.eventStart,
+          event_end: data.eventEnd,
         };
         setEvent(transformedEvent);
       })
@@ -163,6 +162,9 @@ export default function SelectTicket() {
       .catch((err) => {
         console.error(err);
         setMessage("讀取票種資料時發生錯誤: " + err.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   useEffect(() => {
@@ -447,144 +449,179 @@ export default function SelectTicket() {
         />
       </div>
 
-      <div className="event-info-wrapper">
-        <div className="event-info">
-          <div className="event-left">
-            {/* 顯示後端回傳的圖片（若為相對路徑則加上 BASE_API_URL） */}
-            <img
-              className="event-image"
-              alt="event"
-              src={
-                event?.image 
-                  ? (event.image.startsWith("http") ? event.image : `${BASE_API_URL}${event.image}`)
-                  : DEFAULT_FALLBACK_SRC
-              }
-            />
-          </div>
-
-          <div className="event-center">
-            <h5 id="eventTitle" className="event-title">
-              {event?.title || "活動標題載入中..."}
-            </h5>
-            <p id="eventDate">{event ? `展出期間: ${event.event_start} ~ ${event.event_end}` : ""}</p>
-            <p id="eventLocation">{event ? `活動地點: ${event.address}` : ""}</p>
-          </div>
-        </div>
-      </div>
-      <div className="main-content-wrapper">
-        <div className="ticketzone">
-          <h2>票種選擇</h2>
-
-          <div className="ticket-layout">
-            <div className="ticket-left">
-              <table className="tickets">
-                <thead>
-                  <tr>
-                    <th>票種</th>
-                    <th>票價</th>
-                    <th>數量</th>
-                    <th>備註</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tickets.length === 0 ? (
-                    <tr>
-                      <td colSpan="4">票種載入中或無票種資料</td>
-                    </tr>
-                  ) : (
-                    tickets.map((t) => (
-                      <React.Fragment key={t.id ?? t.ticketType}>
-                        <tr className={t.earlyBirdEnabled && (t.finalPrice < t.customprice) ? 'early-bird-row' : ''}
-                          data-ticket-id={t.id ?? ""}>
-                          <td className={t.earlyBirdEnabled && (t.finalPrice < t.customprice) ? 'early-bird-name' : ''}>
-                            {t.ticketType}
-                          </td>
-                          <td>
-                            {t.earlyBirdEnabled && (t.finalPrice < t.customprice) ? (
-                              <>
-                                <span className="original-price">NT${t.customprice}</span>
-                                <span className="final-price-highlight">NT${t.finalPrice}</span>
-                              </>
-                            ) : (
-                              `NT$${t.finalPrice}`
-                            )}
-                          </td>{/*t.customprice*/}
-                          <td>
-                          {t.customlimit > 0 ? (
-                            <select
-                              className="ticketselct"
-                              value={t.selectedQty}
-                              onChange={(e) => handleQtyChange(t.id, Number(e.target.value))}
-                              data-price={t.customprice}
-                              disabled={isCheckingOut} //結帳中禁用選擇
-                            >
-                              <option value={0}>請選擇張數</option>
-                              {(() => {
-                                // 計算可選的最大數量：Min(4, 實際庫存)
-                                const maxSelectable = Math.min(4, Number(t.customlimit || 0))
-                                const options = []
-                                for (let i = 1; i <= maxSelectable; i++) {
-                                  options.push(
-                                    <option key={i} value={i}>
-                                      {i}
-                                    </option>
-                                  );
-                                }
-                                return options;
-                              })()}
-                            </select>
-                            ) : (
-                           <span className="sold-out-text" style={{ color: 'red', fontWeight: 'bold' }}>
-                             已售罄
-                           </span>
-                           )}
-                          </td>
-                          <td>{t.description}</td>
-                        </tr>
-                        {/* 判斷是否顯示早鳥票訊息行 */}
-                        {t.earlyBirdEnabled && (t.finalPrice < t.customprice) && (
-                          <tr className="early-bird-message-row">
-                            <td colSpan="4" className="early-bird-message">
-                              <span className="early-bird-text">✨ 早鳥票優惠實施中！</span>
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    ))
-                  )}
-                </tbody>
-              </table>
+      {loading ? (
+        <>
+          <div className="event-info-wrapper">
+            <div className="event-info">
+              <div className="event-left">
+                <div className="event-image skeleton" style={{ width: '100%', height: '100%' }} />
+              </div>
+              <div className="event-center space-y-4">
+                <div className="h-8 w-3/4 skeleton rounded" />
+                <div className="h-4 w-1/2 skeleton rounded" />
+                <div className="h-4 w-1/3 skeleton rounded" />
+              </div>
             </div>
           </div>
+          <div className="main-content-wrapper">
+            <div className="ticketzone">
+              <div className="h-8 w-32 skeleton rounded mb-6" />
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-16 w-full skeleton rounded" />
+                ))}
+              </div>
+            </div>
+            <aside className="totalfee-fixed space-y-4">
+              <div className="h-6 w-full skeleton rounded" />
+              <div className="h-6 w-full skeleton rounded" />
+              <hr />
+              <div className="h-8 w-full skeleton rounded" />
+              <div className="flex gap-2 mt-4">
+                <div className="h-10 flex-1 skeleton rounded" />
+                <div className="h-10 flex-1 skeleton rounded" />
+              </div>
+            </aside>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="event-info-wrapper">
+            <div className="event-info">
+              <div className="event-left">
+                {/* 顯示後端回傳的圖片（後端已處理好完整路徑或遠端網址） */}
+                <img
+                  className="event-image"
+                  alt="event"
+                  src={event?.image || DEFAULT_FALLBACK_SRC}
+                />
+              </div>
 
-          <div id="message" style={{ marginTop: 12 }}>{message}</div>
-        </div>
+              <div className="event-center">
+                <h5 id="eventTitle" className="event-title">
+                  {event?.title || "活動標題載入中..."}
+                </h5>
+                <p id="eventDate">{event ? `展出期間: ${event.event_start} ~ ${event.event_end}` : ""}</p>
+                <p id="eventLocation">{event ? `活動地點: ${event.address}` : ""}</p>
+              </div>
+            </div>
+          </div>
+          <div className="main-content-wrapper">
+            <div className="ticketzone">
+              <h2>票種選擇</h2>
 
-        <aside className="totalfee-fixed">
-          <div className="ticket-type-summary">
-            <span className="ticket-type-label">票種:</span>
-            <span id="tickettype">{selectedTicketText}</span>
+              <div className="ticket-layout">
+                <div className="ticket-left">
+                  <table className="tickets">
+                    <thead>
+                      <tr>
+                        <th>票種</th>
+                        <th>票價</th>
+                        <th>數量</th>
+                        <th>備註</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tickets.length === 0 ? (
+                        <tr>
+                          <td colSpan="4">目前無票種資料</td>
+                        </tr>
+                      ) : (
+                        tickets.map((t) => (
+                          <React.Fragment key={t.id ?? t.ticketType}>
+                            <tr className={t.earlyBirdEnabled && (t.finalPrice < t.customprice) ? 'early-bird-row' : ''}
+                              data-ticket-id={t.id ?? ""}>
+                              <td className={t.earlyBirdEnabled && (t.finalPrice < t.customprice) ? 'early-bird-name' : ''}>
+                                {t.ticketType}
+                              </td>
+                              <td>
+                                {t.earlyBirdEnabled && (t.finalPrice < t.customprice) ? (
+                                  <>
+                                    <span className="original-price">NT${t.customprice}</span>
+                                    <span className="final-price-highlight">NT${t.finalPrice}</span>
+                                  </>
+                                ) : (
+                                  `NT$${t.finalPrice}`
+                                )}
+                              </td>{/*t.customprice*/}
+                              <td>
+                              {t.customlimit > 0 ? (
+                                <select
+                                  className="ticketselct"
+                                  value={t.selectedQty}
+                                  onChange={(e) => handleQtyChange(t.id, Number(e.target.value))}
+                                  data-price={t.customprice}
+                                  disabled={isCheckingOut} //結帳中禁用選擇
+                                >
+                                  <option value={0}>請選擇張數</option>
+                                  {(() => {
+                                    // 計算可選的最大數量：Min(4, 實際庫存)
+                                    const maxSelectable = Math.min(4, Number(t.customlimit || 0))
+                                    const options = []
+                                    for (let i = 1; i <= maxSelectable; i++) {
+                                      options.push(
+                                        <option key={i} value={i}>
+                                          {i}
+                                        </option>
+                                      );
+                                    }
+                                    return options;
+                                  })()}
+                                </select>
+                                ) : (
+                               <span className="sold-out-text" style={{ color: 'red', fontWeight: 'bold' }}>
+                                 已售罄
+                               </span>
+                               )}
+                              </td>
+                              <td>{t.description}</td>
+                            </tr>
+                            {/* 判斷是否顯示早鳥票訊息行 */}
+                            {t.earlyBirdEnabled && (t.finalPrice < t.customprice) && (
+                              <tr className="early-bird-message-row">
+                                <td colSpan="4" className="early-bird-message">
+                                  <span className="early-bird-text">✨ 早鳥票優惠實施中！</span>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div id="message" style={{ marginTop: 12 }}>{message}</div>
+            </div>
+
+            <aside className="totalfee-fixed">
+              <div className="ticket-type-summary">
+                <span className="ticket-type-label">票種:</span>
+                <span id="tickettype">{selectedTicketText}</span>
+              </div>
+              <div><strong>總張數:</strong> <span id="totaltickets">{totalTickets > 0 ? `總共 ${totalTickets}張` : ''}</span></div>
+              <hr />
+              <div>
+                <strong>總金額: <span id="total">NT${totalAmount}</span></strong>
+              </div>
+              <div style={{ marginTop: 10 }} className="checkout-buttons">
+                <button
+                  className="btn btn-secondary cancel-btn"
+                  onClick={() => navigate(`/events`)} //點擊取消是導回活動列表頁
+                  disabled={isCheckingOut}
+                >取消購票</button>
+                <button
+                  className="btn"
+                  id="checkoutBtn"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut || totalTickets === 0} //禁用按鈕直到載入完成或選擇數量 > 0
+                >前往結帳</button>
+              </div>
+            </aside>
           </div>
-          <div><strong>總張數:</strong> <span id="totaltickets">{totalTickets > 0 ? `總共 ${totalTickets}張` : ''}</span></div>
-          <hr />
-          <div>
-            <strong>總金額: <span id="total">NT${totalAmount}</span></strong>
-          </div>
-          <div style={{ marginTop: 10 }} className="checkout-buttons">
-            <button
-              className="btn btn-secondary cancel-btn"
-              onClick={() => navigate(`/events`)} //點擊取消是導回活動列表頁
-              disabled={isCheckingOut}
-            >取消購票</button>
-            <button
-              className="btn"
-              id="checkoutBtn"
-              onClick={handleCheckout}
-              disabled={isCheckingOut || totalTickets === 0} //禁用按鈕直到載入完成或選擇數量 > 0
-            >前往結帳</button>
-          </div>
-        </aside>
-      </div>
+        </>
+      )}
 
       <Footer />
     </div>

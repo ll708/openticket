@@ -5,17 +5,19 @@ public class EventDto {
 	private String image;
 	private String address;
 	private String eventStart;
+	private String eventEnd;
 	private String title;
 	private Integer statusId;
 	
 
 	public EventDto() {}
 
-	public EventDto(Long id, String image, String address, String eventStart, String title, Integer statusId) {
+	public EventDto(Long id, String image, String address, String eventStart, String eventEnd, String title, Integer statusId) {
 		this.id = id;
 		this.image = image;
 		this.address = address;
 		this.eventStart = eventStart;
+		this.eventEnd = eventEnd;
 		this.title = title;
 		this.statusId = statusId;
 	}
@@ -50,6 +52,14 @@ public class EventDto {
 
 	public void setEventStart(String eventStart) {
 		this.eventStart = eventStart;
+	}
+
+	public String getEventEnd() {
+		return eventEnd;
+	}
+
+	public void setEventEnd(String eventEnd) {
+		this.eventEnd = eventEnd;
 	}
 
 	public String getTitle() {

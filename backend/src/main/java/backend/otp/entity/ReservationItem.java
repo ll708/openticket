@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.math.BigDecimal;
 
 // 預約明細，扣庫存要用
 
