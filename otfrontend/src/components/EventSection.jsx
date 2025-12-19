@@ -103,12 +103,20 @@ function EventSection() {
     fetch("/api/events")
       .then(res => res.json())
       .then(data => {
-        const fixed = Array.isArray(data)
+        let fixed = Array.isArray(data)
           ? data.map(event => ({
              ...event,
              eventStart: formatDate(event.eventStart) 
            }))
           : [];
+        
+        // 依活動開始時間排序 (最快到來的在前)
+        fixed.sort((a, b) => {
+          if (a.eventStart === "未定") return 1;
+          if (b.eventStart === "未定") return -1;
+          return new Date(a.eventStart.replace(/\//g, '-')) - new Date(b.eventStart.replace(/\//g, '-'));
+        });
+
         // 只保留最多 MAX_EVENTS_DISPLAY 個活動
         setEvents(fixed.slice(0, MAX_EVENTS_DISPLAY));
       })

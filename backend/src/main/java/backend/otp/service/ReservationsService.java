@@ -11,22 +11,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import backend.otp.dto.ReservationItemsCreateRequest;
-import backend.otp.dto.ReservationItemsResponse;
-import backend.otp.dto.ReservationResponse;
-import backend.otp.dto.ReservationsCreateRequest;
-import backend.otp.entity.EventJpa;
-import backend.otp.entity.EventTicketType;
-import backend.otp.entity.Member;
-import backend.otp.entity.Orders;
-import backend.otp.entity.ReservationItems;
-import backend.otp.entity.Reservations;
-import backend.otp.entity.TicketDiscountConfig;
-import backend.otp.repository.EventRepositoryJPA;
-import backend.otp.repository.EventTicketTypeRep;
-import backend.otp.repository.MemberRepository;
-import backend.otp.repository.OrdersRepository;
-import backend.otp.repository.ReservationsRepository;
+import backend.otp.dto.*;
+import backend.otp.entity.*;
+import backend.otp.repository.*;
 
 @Service
 public class ReservationsService {
@@ -201,24 +188,6 @@ public class ReservationsService {
 
 
 
-    // 將Reservations Entity轉成DTO
-    private ReservationResponse mapToReservationResponse(Reservations entity) {
-        ReservationResponse response = new ReservationResponse();
-
-        response.setId(entity.getId());
-        response.setUserId(entity.getUser().getId());
-        response.setEventId(entity.getEvent().getId());
-        response.setExpiresAt(entity.getExpiresAt());
-        response.setCreatedAt(entity.getCreatedAt());
-        response.setTotalAmount(entity.getTotalAmount());
-
-        List<ReservationItemsResponse> itemResponses = entity.getItems().stream()
-                .map(this::mapToReservationItemsResponse) // 使用新的輔助方法轉換每個細項
-                .toList();
-        response.setItems(itemResponses);
-
-        return response;
-    }
 
     // 將ReservationItems Entity轉成DTO
     private ReservationItemsResponse mapToReservationItemsResponse(ReservationItems itemEntity) {

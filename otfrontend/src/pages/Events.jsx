@@ -59,9 +59,16 @@ export default function Events() {
     // 依分頁與關鍵字過濾活動
     let filteredEvents = Array.isArray(events) ? events : [];
     if (tab === "upcoming") {
+        // 近期活動：依活動開始時間排序 (最快到來的在前)
         filteredEvents = [...filteredEvents].sort((a, b) => {
-            const parseDate = (str) => new Date(str);
-            return parseDate(a.eventStart) - parseDate(b.eventStart);
+            // 處理 "未定" 的情況，將其排在最後
+            if (a.eventStart === "未定") return 1;
+            if (b.eventStart === "未定") return -1;
+            
+            const dateA = new Date(a.eventStart.replace(/\//g, '-'));
+            const dateB = new Date(b.eventStart.replace(/\//g, '-'));
+            
+            return dateA - dateB;
         });
     }
     if (keyword) {

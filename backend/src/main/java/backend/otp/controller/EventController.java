@@ -2,7 +2,6 @@ package backend.otp.controller;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +53,7 @@ public class EventController {
 				imageMap.putIfAbsent(img.getEventId(), img.getImageUrl());
 			}
 
-			// 4. 轉換為 DTO 並回傳 (按 ID 倒序排列，與原本 JDBC 行為一致)
+			// 4. 轉換為 DTO 並回傳 (預設按 ID 倒序排列，即最新上架在前)
 			List<EventDto> result = events.stream()
 				.sorted(Comparator.comparing(EventJpa::getId).reversed())
 				.map(eventJpa -> {
@@ -81,6 +80,7 @@ public class EventController {
 						imageUrl,
 						eventJpa.getAddress(),
 						eventJpa.getEvent_start() != null ? eventJpa.getEvent_start().toString() : "",
+						eventJpa.getEvent_end() != null ? eventJpa.getEvent_end().toString() : "",
 						eventJpa.getTitle(),
 						eventJpa.getStatusId());
 				})
@@ -125,6 +125,7 @@ public class EventController {
 						imageUrl,
 						eventJpa.getAddress(),
 						eventJpa.getEvent_start() != null ? eventJpa.getEvent_start().toString() : "",
+						eventJpa.getEvent_end() != null ? eventJpa.getEvent_end().toString() : "",
 						eventJpa.getTitle(),
 						eventJpa.getStatusId());
 				})
