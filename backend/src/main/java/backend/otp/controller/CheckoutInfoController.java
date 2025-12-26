@@ -7,23 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import backend.otp.dto.ReservationCheckoutDto;
-import backend.otp.entity.EventTicketType;
-import backend.otp.entity.Reservation;
-import backend.otp.entity.ReservationItem;
-import backend.otp.entity.TicketType;
-import backend.otp.repository.EventTicketTypeRepository;
-import backend.otp.repository.MemberRepository;
-import backend.otp.repository.ReservationItemRepository;
-import backend.otp.repository.ReservationRepository;
-import backend.otp.repository.TicketTypeRepository;
-import backend.otp.repository.UserRepository;
+import backend.otp.entity.*;
+import backend.otp.repository.*;
 
 @RestController
 @RequestMapping("/api/reservations")

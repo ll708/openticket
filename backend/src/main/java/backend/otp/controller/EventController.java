@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import backend.otp.dto.*;
 import backend.otp.entity.*;
 import backend.otp.repository.*;
+import backend.otp.service.EventService;
 import backend.otp.service.EventStatsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,70 +23,23 @@ public class EventController {
 	private final EventDetailRepository eventDetailRepository;
 	private final EventRepositoryJPA eventRepositoryJPA;
 	private final EventTitlePageRepository eventTitlePageRepository;
+	private final EventService eventService;
 
 	public EventController(EventStatsService eventStatsService,
 			EventDetailRepository eventDetailRepository, EventRepositoryJPA eventRepositoryJPA,
-			EventTitlePageRepository eventTitlePageRepository) {
+			EventTitlePageRepository eventTitlePageRepository, EventService eventService) {
 		this.eventStatsService = eventStatsService;
 		this.eventDetailRepository = eventDetailRepository;
 		this.eventRepositoryJPA = eventRepositoryJPA;
 		this.eventTitlePageRepository = eventTitlePageRepository;
+		this.eventService = eventService;
 	}
 
 	@Operation(summary = "取得所有活動列表", description = "回傳所有活動的基本資訊與封面圖")
 	@GetMapping
 	public ResponseEntity<List<EventDto>> getAllEvents() {
 		try {
-			// 1. 取得所有可顯示的活動 (SQL 層級過濾：1, 2, 4)
-			List<Integer> visibleStatuses = Arrays.asList(
-				EventStatus.NOT_OPEN.getId(), 
-				EventStatus.ONGOING.getId(), 
-				EventStatus.OPEN_FOR_TICKET.getId()
-			);
-			List<EventJpa> events = eventRepositoryJPA.findAllByStatusIdIn(visibleStatuses);
-			
-			// 2. 取得所有圖片資訊 (按建立時間倒序)
-			List<EventTitlePageEntity> images = eventTitlePageRepository.findAllByOrderByCreatedAtDesc();
-			
-			// 3. 建立 EventId -> ImageUrl 的 Map (只保留最新的)
-			Map<Long, String> imageMap = new HashMap<>();
-			for (EventTitlePageEntity img : images) {
-				imageMap.putIfAbsent(img.getEventId(), img.getImageUrl());
-			}
-
-			// 4. 轉換為 DTO 並回傳 (預設按 ID 倒序排列，即最新上架在前)
-			List<EventDto> result = events.stream()
-				.sorted(Comparator.comparing(EventJpa::getId).reversed())
-				.map(eventJpa -> {
-					String imageUrl = imageMap.getOrDefault(eventJpa.getId(), "/api/images/covers/test.jpg");
-					// 新邏輯：如果 imageUrl 已經是完整網址或 /api/images/covers/ 開頭，直接傳給前端
-					if (!imageUrl.equals("/api/images/covers/test.jpg")) {
-						if (
-							imageUrl.startsWith("http://") ||
-							imageUrl.startsWith("https://")
-						) {
-							// 保持原樣
-						} else if (imageUrl.startsWith("/api/images/covers/")) {
-							// 已經有正確前綴，保持原樣
-						} else if (imageUrl.startsWith("/api/files/covers/")) {
-							// 去掉 /api/files/covers/ 前綴，補上 /api/images/covers/
-							imageUrl = "/api/images/covers/" + imageUrl.substring("/api/files/covers/".length());
-						} else {
-							// 舊資料只存檔名，補上 /api/images/covers/
-							imageUrl = "/api/images/covers/" + imageUrl;
-						}
-					}
-					return new EventDto(
-						eventJpa.getId(),
-						imageUrl,
-						eventJpa.getAddress(),
-						eventJpa.getEvent_start() != null ? eventJpa.getEvent_start().toString() : "",
-						eventJpa.getEvent_end() != null ? eventJpa.getEvent_end().toString() : "",
-						eventJpa.getTitle(),
-						eventJpa.getStatusId());
-				})
-				.collect(Collectors.toList());
-			
+			List<EventDto> result = eventService.getAllEventsDto();
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,36 +53,7 @@ public class EventController {
 	public ResponseEntity<EventDto> getEventById(
 			@Parameter(description = "活動 ID", required = true) @PathVariable Long id) {
 		try {
-			return eventRepositoryJPA.findById(id)
-				.filter(eventJpa -> EventStatus.isVisible(eventJpa.getStatusId()))
-				.map(eventJpa -> {
-					String imageUrl = eventTitlePageRepository.findFirstByEventIdOrderByCreatedAtDesc(id)
-						.map(img -> {
-							String url = img.getImageUrl();
-							if (
-								url.startsWith("http://") ||
-								url.startsWith("https://")
-							) {
-								return url;
-							} else if (url.startsWith("/api/images/covers/")) {
-								return url;
-							} else if (url.startsWith("/api/files/covers/")) {
-								return "/api/images/covers/" + url.substring("/api/files/covers/".length());
-							} else {
-								return "/api/images/covers/" + url;
-							}
-						})
-						.orElse("/api/images/covers/test.jpg");
-
-					return new EventDto(
-						eventJpa.getId(),
-						imageUrl,
-						eventJpa.getAddress(),
-						eventJpa.getEvent_start() != null ? eventJpa.getEvent_start().toString() : "",
-						eventJpa.getEvent_end() != null ? eventJpa.getEvent_end().toString() : "",
-						eventJpa.getTitle(),
-						eventJpa.getStatusId());
-				})
+			return eventService.getEventDtoById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 		} catch (Exception e) {
