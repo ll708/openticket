@@ -1,6 +1,9 @@
 package backend.otp.dto;
 
-public class EventDto {
+import java.io.Serializable;
+
+public class EventDto implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String image;
 	private String address;
