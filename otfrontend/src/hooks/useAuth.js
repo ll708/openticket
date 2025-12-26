@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from '../components/ToastContext';
 
 
@@ -156,6 +156,7 @@ export const useAuth = () => {
     // 我們改為依賴 isLoggedIn 狀態，並在載入時調用 getProfile 來驗證 Cookie。
     const [isLoading, setIsLoading] = useState(true);
     const { showToast } = useToast();
+    const location = useLocation();
 
     // 輔助函式：用來從 /member/profile 獲取並設置狀態 (登入成功後調用)
     const setAuthStatusFromProfile = useCallback(async () => {
@@ -238,33 +239,37 @@ export const useAuth = () => {
         }
     }, [navigate, showToast]);
 
+    const fetchLatestProfile = useCallback(async () => {
+        // 強制刷新以避開 3 秒快取，確保及時看到修改結果
+        const result = await actualApi.getProfile(true); 
+
+        if (result.success) {
+            setUserName(result.name);
+            setUserRole(result.role);
+            setIsLoggedIn(true);
+        } else {
+            setUserName("");
+            setUserRole(null);
+            setIsLoggedIn(false);
+        }
+    }, []);
+
     // 3. 檢查持久化狀態 (元件首次載入時驗證 JWT Cookie 的有效性)
     useEffect(() => {
-        const checkLoginStatus = async () => {
-            // 嘗試呼叫一個受保護的 API (例如 /member/info)
-            // 瀏覽器會自動帶上 JWT Cookie
-
-            setIsLoading(true);
-            await setAuthStatusFromProfile();
-            // const result = await actualApi.getProfile();
-
-            // if (result.success) {
-            //     // Cookie 有效，且成功返回用戶名
-            //     setUserName(result.name);
-            //     setIsLoggedIn(true);
-            // } else {
-            //     // Cookie 無效、過期或不存在
-            //     // 注意：這裡不需要呼叫 logout，因為 Cookie 已經失效，只需確保本地狀態為登出
-            //     setUserName("");
-            //     setIsLoggedIn(false);
-            // }
-            setIsLoading(false);
+        const checkStatus = async () => {
+            // 只有路徑包含 /member 時才去後端抓最新資料
+            if (location.pathname.includes('/member')) {
+                setIsLoading(true); // 開始載入
+                await fetchLatestProfile();
+                setIsLoading(false); // 結束載入
+            } else {
+                // 如果在非會員頁面，可能只需要基本的載入狀態處理
+                setIsLoading(false);
+            }
         };
 
-        // 只有在元件首次載入時運行一次
-        checkLoginStatus();
-
-    }, []);
+        checkStatus();
+    }, [location.pathname, fetchLatestProfile]);
 
 
     return { isLoggedIn, userName, userRole, login, logout, isLoading };
