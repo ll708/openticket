@@ -11,7 +11,7 @@ import backend.otp.entity.Member;
 import backend.otp.repository.MemberRepository;
 
 @SpringBootApplication
-@EnableCaching
+// @EnableCaching
 public class BackendApplication {
 
 	public static void main(String[] args) {
