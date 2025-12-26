@@ -257,19 +257,23 @@ export const useAuth = () => {
     // 3. 檢查持久化狀態 (元件首次載入時驗證 JWT Cookie 的有效性)
     useEffect(() => {
         const checkStatus = async () => {
-            // 只有路徑包含 /member 時才去後端抓最新資料
+            // 情況 A：如果是進入會員相關頁面 -> 強制刷新 (獲取最新姓名)
             if (location.pathname.includes('/member')) {
-                setIsLoading(true); // 開始載入
+                setIsLoading(true);
                 await fetchLatestProfile();
-                setIsLoading(false); // 結束載入
-            } else {
-                // 如果在非會員頁面，可能只需要基本的載入狀態處理
+                setIsLoading(false);
+            } 
+            // 情況 B：如果是首頁或其他頁面 -> 也要驗證登入狀態 (確保 Header 顯示正確)
+            // 但如果已經 isLoggedIn 為 true 了，可以不用重複 fetch 以節省資源
+            else if (!isLoggedIn) {
+                setIsLoading(true);
+                await setAuthStatusFromProfile(); // 使用原本的驗證邏輯
                 setIsLoading(false);
             }
         };
 
         checkStatus();
-    }, [location.pathname, fetchLatestProfile]);
+    }, [location.pathname, fetchLatestProfile, setAuthStatusFromProfile, isLoggedIn]);
 
 
     return { isLoggedIn, userName, userRole, login, logout, isLoading };
