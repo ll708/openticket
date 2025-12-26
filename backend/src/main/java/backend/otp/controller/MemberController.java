@@ -25,17 +25,12 @@ import backend.otp.dto.MemberDto;
 import backend.otp.dto.MemberReviseDto;
 import backend.otp.entity.LoginLog;
 import backend.otp.entity.Member;
-import backend.otp.service.EmailService;
-import backend.otp.service.LoginLogService;
-import backend.otp.service.MemberService;
-import backend.otp.service.VerificationService;
+import backend.otp.service.*;
 import backend.otp.utils.BCrypt;
 import backend.otp.utils.JWTutils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 
 @RestController
 @RequestMapping("/member")
